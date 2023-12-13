@@ -1,4 +1,6 @@
-export const kbl_matches = [
+import { MatchData } from '@/components/sports/types'
+
+const kbl_matches = [
     {
       "": 0,
       "matchDate": "12.01 금",
@@ -658,3 +660,16 @@ export const kbl_matches = [
       "matchTeams": ['울산 현대모비스 피버스', '안양 정관장 레드부스터스', '부산 KCC 이지스', '서울 SK 나이츠', '원주 DB 프로미', '대구 한국가스공사 페가수스', '고양 소노 스카이거너스', '수원 KT 소닉붐', '창원 LG 세이커스', '서울 삼성 썬더스']
     }
   ]
+
+  export const kbl_matches_map: MatchData[] = []
+    kbl_matches.map(data => {
+        data.matchTime.map((match, matchIndex) => {
+            const input: MatchData = {
+                matchDate: data.matchDate,
+                matchTime: match,
+                matchPlace: data.matchPlace[matchIndex],
+                matchTeams: data.matchTeams.slice(matchIndex * 2, (matchIndex + 1) * 2)
+            }
+            kbl_matches_map.push(input)
+        })
+    })

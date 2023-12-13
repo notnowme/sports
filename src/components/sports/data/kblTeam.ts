@@ -1,42 +1,42 @@
 export const kblTeamArr = [
     {
-        name: 'db',
+        name: 'promy',
         imgUrl: '/img/kbl/emblem-db.svg'
     },
     {
-        name: 'gas',
+        name: 'pegasus',
         imgUrl: '/img/kbl/emblem-gas.svg'
     },
     {
-        name: 'hd',
+        name: 'phdebus',
         imgUrl: '/img/kbl/emblem-hd.svg'
     },
     {
-        name: 'kcc',
+        name: 'egis',
         imgUrl: '/img/kbl/emblem-kcc.svg'
     },
     {
-        name: 'kgc',
+        name: 'red',
         imgUrl: '/img/kbl/emblem-kgc-dark.svg'
     },
     {
-        name: 'kt',
+        name: 'sonic',
         imgUrl: '/img/kbl/emblem-kt-dark.svg'
     },
     {
-        name: 'lg',
+        name: 'sakers',
         imgUrl: '/img/kbl/emblem-lg-dark.svg'
     },
     {
-        name: 'sk',
+        name: 'nights',
         imgUrl: '/img/kbl/emblem-sk.svg'
     },
     {
-        name: 'sono',
+        name: 'sky',
         imgUrl: '/img/kbl/emblem-sono.svg'
     },
     {
-        name: 'ss',
+        name: 'thunders',
         imgUrl: '/img/kbl/emblem-ss-dark.svg'
     },
 ]
