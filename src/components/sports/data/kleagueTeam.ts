@@ -8,7 +8,7 @@ export const kleague1 = [
         imgUrl: '/img/kleague/emblem_K03.png'
     },
     {
-        name: 'k1_gw',
+        name: 'k1_gwangju',
         imgUrl: '/img/kleague/emblem_K22.png'
     },
     {
@@ -40,11 +40,11 @@ export const kleague1 = [
         imgUrl: '/img/kleague/emblem_K21.png'
     },
     {
-        name: 'k1_suwon',
+        name: 'k1_suwonfc',
         imgUrl: '/img/kleague/emblem_K29.png'
     },
     {
-        name: 'k1_suwon2',
+        name: 'k1_suwonss',
         imgUrl: '/img/kleague/emblem_K02.png'
     },
 ]

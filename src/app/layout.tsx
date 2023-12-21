@@ -5,6 +5,8 @@ import './globals.css'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { NavigationTop } from '@/components/navigation/navigation-top'
 import { ChatButton } from '@/components/chat/chat-button'
+import RecoilProvider from '@/components/providers/recoil-provider'
+import ChatContainer from '@/components/chat/chat-container'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,16 +23,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}, flex flex-col items-center bg-white dark:bg-[#121212]`}>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='dark'
-          enableSystem={false}
-          storageKey='embers-theme'
-        >
-          <NavigationTop />
-          {children}
-          <ChatButton />
-        </ThemeProvider>
+        <RecoilProvider>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='dark'
+            enableSystem={false}
+            storageKey='embers-theme'
+          >
+            <NavigationTop />
+            {children}
+            <ChatButton />
+            <ChatContainer />
+          </ThemeProvider>
+        </RecoilProvider>
       </body>
     </html>
   )

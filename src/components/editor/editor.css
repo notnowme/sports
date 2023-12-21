@@ -1,0 +1,15 @@
+.ql-toolbar {
+    border: none !important;
+}
+.ql-container {
+    border: none !important;
+}
+.ql-editor::before {
+    color: #eee !important;
+}
+.ql-toolbar svg:hover {
+    filter: invert(49%) sepia(44%) saturate(5816%) hue-rotate(147deg) brightness(94%) contrast(101%);
+}
+.ql-active svg {
+    filter: invert(49%) sepia(44%) saturate(5816%) hue-rotate(147deg) brightness(94%) contrast(101%);
+}

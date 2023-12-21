@@ -3,6 +3,8 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { kleague1, kleague2 } from '@/components/sports/data/kleagueTeam'
+import { useSelectedLayoutSegments } from "next/navigation";
+import Link from 'next/link';
 
 interface Emblem {
     name: string
@@ -12,6 +14,8 @@ interface Emblem {
 export const SportsHeaderKleague = () => {
     const [current, setCurrent] = useState('kleague1')
     const [emblemArr, setEmblemArr] = useState<Emblem[]>(kleague1)
+    const segment = useSelectedLayoutSegments();
+    console.log(segment)
 
     useEffect(() => {
         if (current === 'kleague1') {
@@ -40,9 +44,12 @@ export const SportsHeaderKleague = () => {
             </div>
             <div className='ml-10 flex gap-4'>
                 {emblemArr.map((data) => (
-                    <div key={data.name} className='relative w-[35px] h-[35px] p-1 rounded-md cursor-pointer hover:bg-[#343434]'>
-                        <Image src={data.imgUrl} fill alt={`${data.name} logo`} />
-                    </div>
+                    <Link key={data.name} href={`/sports/kleague/${data.name}`}>
+                        <div 
+                            className={`relative w-[50px] h-[50px] p-2 rounded-md cursor-pointer hover:bg-[#444] ${segment.includes(data.name) ? 'bg-[#444]' : ''}`}>
+                            <Image src={data.imgUrl} width={35} height={35} alt={`${data.name} logo`} />
+                        </div>
+                    </Link>
                 ))
                 }
             </div>

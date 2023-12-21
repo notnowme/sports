@@ -28,6 +28,44 @@ const teamEmblems: { [key: string]: string
     'KT': 'img/kbl/emblem-kt-dark.svg',
     'KCC': 'img/kbl/emblem-kcc.svg',
     'SK': 'img/kbl/emblem-sk.svg',
+    '강원': 'img/kleague/emblem_K21.png',
+    '대전': 'img/kleague/emblem_K10.png',
+    '제주': 'img/kleague/emblem_K04.png',
+    '광주': 'img/kleague/emblem_K22.png',
+    '울산': 'img/kleague/emblem_K01.png',
+    '인천': 'img/kleague/emblem_K18.png',
+    '대구': 'img/kleague/emblem_K17.png',
+    '수원FC': 'img/kleague/emblem_K29.png',
+    '서울': 'img/kleague/emblem_K09.png',
+    '전북': 'img/kleague/emblem_K05.png',
+    '수원삼성': 'img/kleague/emblem_K02.png',
+    '포항': 'img/kleague/emblem_K03.png',
+    '부산':'img/kleague/emblem_K06.png',
+    '김포':'img/kleague/emblem_K36.png',
+    'KIA':'img/kbo/emblemF_HT.png',
+    'SSG':'img/kbo/emblemF_SK.png',
+    'LG twins':'img/kbo/emblemF_LG.png',
+    '두산':'img/kbo/emblemF_OB.png',
+    'KT wiz':'img/kbo/emblemF_KT.png',
+    'NC':'img/kbo/emblemF_NC.png',
+    '한화':'img/kbo/emblemF_HH.png',
+    '삼성':'img/kbo/emblemF_SS.png',
+    '롯데':'img/kbo/emblemF_LT.png',
+    '키움':'img/kbo/emblemF_WO.png',
+    '삼성화재': 'img/kovo/bluefangs.png',
+    '현대캐피탈': 'img/kovo/walkers.png',
+    '한국전력': 'img/kovo/vixtorm.png',
+    'KB손해보험': 'img/kovo/kbstars.png',
+    'OK금융그룹': 'img/kovo/okman.png',
+    '우리카드': 'img/kovo/won.png',
+    '대한항공': 'img/kovo/jumbos.png',
+    '페퍼저축은행': 'img/kovo/peppers.png',
+    '흥국생명': 'img/kovo/spiders.png',
+    '정관장': 'img/kovo/redsparks.png',
+    'IBK기업은행': 'img/kovo/altos.png',
+    'GS칼텍스': 'img/kovo/kixx.png',
+    '현대건설': 'img/kovo/hillstate.png',
+    '한국도로공사': 'img/kovo/hipass.png',
 }
 
 const SportsMatchResult = (
@@ -41,9 +79,9 @@ const SportsMatchResult = (
                 <span>{matchPlace}</span>
             </div>
             <div className='mb-4'>
-                <div className='flex items-center justify-between'>
+                <div className='flex items-center justify-between mb-1'>
                     <div className='flex items-center'>
-                        <div className='relative w-[30px] h-[30px]'>
+                        <div className='relative w-[30px] h-[30px] mr-2'>
                             <Image src={`/${teamEmblems[matchTeams[0]]}`} fill alt='logo' />
                         </div>
                         <span>{matchTeams[0]}</span>
@@ -51,7 +89,7 @@ const SportsMatchResult = (
                 </div>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center'>
-                        <div className='relative w-[30px] h-[30px]'>
+                        <div className='relative w-[30px] h-[30px] mr-2'>
                             <Image src={`/${teamEmblems[matchTeams[1]]}`} fill alt='logo' />
                         </div>
                         <span>{matchTeams[1]}</span>

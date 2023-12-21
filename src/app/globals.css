@@ -15,6 +15,10 @@ body,
   font-family: 'Pretendard-Regular';
 }
 
+.no-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 
 :root {
   --foreground-rgb: 0, 0, 0;
