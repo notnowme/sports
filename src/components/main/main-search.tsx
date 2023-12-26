@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 
 const MainSearch = () => {
+
     return (
         <div className="relative w-full flex flex-col items-center justify-center mb-[50px]">
             <div className="relative w-full max-w-[768px]">

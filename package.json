@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.12.2",
+    "axios": "^1.6.2",
     "lucide-react": "^0.294.0",
     "moment": "^2.29.4",
     "mysql2": "^3.6.5",
