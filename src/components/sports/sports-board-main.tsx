@@ -13,9 +13,11 @@ import Link from 'next/link';
 interface SportBoardPageLayout {
     params?: {team: string}
     children?: React.ReactNode
+    sports: string
 }
-const SportsBoardMain = ({children, params}: SportBoardPageLayout) => {
+const SportsBoardMain = ({children, sports}: SportBoardPageLayout) => {
     const pathname = usePathname().split('/')
+    console.log(pathname)
     return (
         <div className="flex flex-col w-full p-2">
             {children}
@@ -47,7 +49,7 @@ const SportsBoardMain = ({children, params}: SportBoardPageLayout) => {
             </div>
             <div className='mt-4 flex items-center justify-end'>
                 <Link
-                    href={`/sports/kbl/${pathname[3]}/free/write`}
+                    href={`/sports/${sports}/${pathname[3]}/${pathname[4]}/write`}
                     className='p-2 bg-[#292929] rounded-md'
                 >
                     <Pencil className='w-5 h-5' />

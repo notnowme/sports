@@ -45,8 +45,10 @@ export const SportsHeaderKOVO = () => {
     return (
         <div className='flex w-full justify-around'>
             <div className='flex items-center'>
-                <div className="relative w-[110px] h-[35px] ">
-                    <Image src={`/img/kovo/kovo_logo.svg`} fill alt='kovo_logo' />
+                <div className={`relative flex w-[110px] h-[50px] rounded-md p-1 ${segment.length === 0 ? 'bg-[#444]' : ''}`}>
+                    <Link href='/sports/kovo'>
+                        <Image src={`/img/kovo/kovo_logo.png`} width={100} height={35} alt='kovo_logo' />
+                    </Link>
                 </div>
                 <div className='ml-6 flex items-center gap-4 text-sm'>
                     <span
@@ -64,7 +66,7 @@ export const SportsHeaderKOVO = () => {
                 {emblemArr.map((data) => (
                     <Link key={data.name} href={`/sports/kovo/${teamLink[data.name]}`}>
                         <div 
-                            className={`relative w-[60px] h-[60px] p-2 rounded-md cursor-pointer hover:bg-[#444] ${segment.includes(teamLink[data.name]) ? 'bg-[#444]' : ''}`}>
+                            className={`relative w-[50px] h-[50px] p-1 rounded-md cursor-pointer hover:bg-[#444] ${segment.includes(teamLink[data.name]) ? 'bg-[#444]' : ''}`}>
                             <Image src={data.imgUrl} width={50} height={50} alt={`${data.name} logo`} />
                         </div>
                     </Link>

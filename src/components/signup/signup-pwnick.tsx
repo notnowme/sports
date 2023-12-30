@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react"
 
 import { Eye, EyeOff } from 'lucide-react'
+import moment from "moment"
 
 interface SignUpPwNickProps {
     loginChk: boolean
@@ -8,6 +9,8 @@ interface SignUpPwNickProps {
     password: string
     pwChk: string
     nick: string
+    birth: string
+    setBirth: Dispatch<SetStateAction<string>>
     showPw: boolean
     showPwChk: boolean
     setShowPw: Dispatch<SetStateAction<boolean>>
@@ -24,6 +27,8 @@ const SignUpPwNick = ({
     password,
     pwChk,
     nick,
+    birth,
+    setBirth,
     showPw,
     showPwChk,
     setShowPw,
@@ -92,6 +97,16 @@ const SignUpPwNick = ({
                     name='nick'
                     value={nick}
                     onChange={onChange}
+                    className='rounded-md w-full p-4 outline-none h-[45px] bg-[#343434] text-[#eee]'
+                    placeholder='닉네임'
+                />
+            </div>
+            <div className='relative flex flex-col w-full max-w-[270px] mt-4 mb-4'>
+                <label htmlFor='nick' className='text-[#eee] text-sm mb-2'>생년월일</label>
+                <input type="date"
+                    name='birth'
+                    value={moment(birth).format('YYYY-MM-DD')}
+                    onChange={(e) => setBirth(prev => e.target.value)}
                     className='rounded-md w-full p-4 outline-none h-[45px] bg-[#343434] text-[#eee]'
                     placeholder='닉네임'
                 />

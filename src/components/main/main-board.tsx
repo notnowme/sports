@@ -1,5 +1,6 @@
 import React from "react";
 import MainBoardItem from "./main-board-item";
+import SportFreeItem from "../sports/sports-free-item";
 
 const MainBoard = () => {
     const arr = new Array(6).fill(0)
@@ -12,13 +13,7 @@ const MainBoard = () => {
             <div className="flex flex-col justify-center w-full h-full mt-[10px]">
                 {arr.map((data, index) => (
                     <React.Fragment key={index}>
-                        <MainBoardItem
-                            teamImg=""
-                            title="제목"
-                            author="이름"
-                            date={new Date()}
-                        />
-                        { index+1 !== arr.length && <div className="border-t m-[10px] border-[#333]" /> }
+                        <SportFreeItem tag='잡담' />
                     </React.Fragment>
                 ))}
             </div>

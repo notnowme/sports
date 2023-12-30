@@ -1,3 +1,5 @@
+import Image  from 'next/image'
+
 interface TeamPageLayoutProps {
     children: React.ReactNode
     params: {
@@ -6,11 +8,12 @@ interface TeamPageLayoutProps {
 }
 
 const TeamPageLayout = ({children, params}: TeamPageLayoutProps) => {
+    console.log(params.team)
     return (
         <div className="relative mt-5 flex flex-col w-full max-w-[1280px]">
-            <div className='w-full h-[300px] bg-[#1D1D1D] mb-10'>
-                팀 구단 이미지나 소개할 수 있는 내용들 넣기
-            </div>
+            {/* <div className='relative w-full h-[500px] bg-[#1D1D1D] mb-10'>
+                <Image src='/img/kleague/ulsan/ulsan-01.jpg' fill alt='img'/>
+            </div> */}
             {children}
         </div>
     )

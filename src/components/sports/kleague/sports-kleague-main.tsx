@@ -6,6 +6,7 @@ import { kleague_matches_map } from '@/data/kleague_matches'
 import SportsReviewList from '@/components/sports/sports-review'
 import SportsMeetList from '@/components/sports/sports-meet'
 import SportMatchContainer from '../sports-match-container'
+import SportFreeItem from '../sports-free-item'
 
 const SportsKleagueMain = () => {
 
@@ -41,12 +42,12 @@ const SportsKleagueMain = () => {
                         />
                         <span>오늘 경기 후기</span>
                     </div>
-                    <div className='flex flex-col w-full rounded-md bg-[#1D1D1D] p-2 gap-y-4'>
-                        <SportsReviewList />
-                        <SportsReviewList />
-                        <SportsReviewList />
-                        <SportsReviewList />
-                        <SportsReviewList />
+                    <div className='flex flex-col w-full rounded-md bg-[#1D1D1D] p-2 gap-y-1'>
+                        <SportFreeItem tag='잡담' />
+                        <SportFreeItem tag='잡담' />
+                        <SportFreeItem tag='잡담' />
+                        <SportFreeItem tag='잡담' />
+                        <SportFreeItem tag='잡담' />
                     </div>
                 </div>
             </div>

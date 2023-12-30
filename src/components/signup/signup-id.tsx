@@ -1,17 +1,20 @@
-import { Dispatch, SetStateAction } from "react"
-
 interface SignUpIDProps {
     vaild: boolean
     id: string
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     loginChk: boolean
-    setLoginChk: Dispatch<SetStateAction<boolean>>
+    handleIdChk: () => void
 }
 
 
-const SignUpID = ({vaild, id, onChange, loginChk ,setLoginChk}:SignUpIDProps) => {
+const SignUpID = ({vaild, id, onChange, loginChk, handleIdChk}:SignUpIDProps) => {
     if(loginChk) {
         return null
+    }
+    const handleEnter = (e: React.KeyboardEvent) => {
+        if(e.key === 'Enter') {
+            handleIdChk();
+        }
     }
     return (
         <>
@@ -21,12 +24,13 @@ const SignUpID = ({vaild, id, onChange, loginChk ,setLoginChk}:SignUpIDProps) =>
                     name='id'
                     value={id}
                     onChange={onChange}
+                    onKeyDown={handleEnter}
                     className='rounded-md w-full p-4 outline-none h-[45px] text-[#eee]'
                     placeholder='아이디'
                 />
             </div>
             <button
-                onClick={() => setLoginChk(prev => true)}
+                onClick={handleIdChk}
                 className={`relative w-full max-w-[270px] h-[45px] rounded-md ${vaild ? 'bg-[#222] text-[#ccc]' : 'bg-[#006d5e] text-[white]'}`}>
                 확인
             </button>

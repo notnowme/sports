@@ -33,7 +33,7 @@ export const SportsHeaderKBO = () => {
                 {kboTeamArr.map((data) => (
                     <Link key={data.name} href={`/sports/kbo/${teamLink[data.name]}`}>
                         <div 
-                            className={`relative flex items-center w-[60px] h-[60px] p-2 rounded-md cursor-pointer hover:bg-[#444] ${segment.includes(teamLink[data.name]) ? 'bg-[#444]' : ''}`}>
+                            className={`relative flex items-center w-[50px] h-[50px] p-1 rounded-md cursor-pointer hover:bg-[#444] ${segment.includes(teamLink[data.name]) ? 'bg-[#444]' : ''}`}>
                             <Image src={data.imgUrl} width={50} height={50} alt={`${data.name} logo`} />
                         </div>
                     </Link>

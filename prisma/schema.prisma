@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  no   Int    @id @default(autoincrement())
+  id   String @unique
+  pw   String
+
+  nick     String
+  birth    String
+  provider String
+  imageUrl String?
+
+  free     FootballBoard[]
+  comments FootballComments[]
+
+  freeNo   Int?
+  freeLike FootballBoard? @relation("like", fields: [freeNo], references: [no], onDelete: Cascade)
+
+  footballCommentNo    Int?
+  footballCommentLikes FootballComments? @relation("like", fields: [footballCommentNo], references: [no], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 리프레시 토큰 모델 생성하기.
+// 지금은 테스트로 jwt 없이 함.
+
+model FootballBoard {
+  no       Int     @id @default(autoincrement())
+  team String
+  title    String
+  content  String
+  imageUrl String?
+
+  isModify Boolean @default(false)
+
+  authorNo Int
+  author   User @relation(fields: [authorNo], references: [no], onDelete: Cascade)
+
+  likes User[] @relation("like")
+
+  comment FootballComments[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FootballComments {
+  no      Int    @id @default(autoincrement())
+  content String
+
+  authorNo Int
+  author   User @relation(fields: [authorNo], references: [no], onDelete: Cascade)
+
+  likes User[] @relation("like")
+
+  footballBaordNo Int
+  footballBoard   FootballBoard @relation(fields: [footballBaordNo], references: [no], onDelete: Cascade)
+
+  parentNo Int?
+  parent   FootballComments[] @relation("parent")
+  child    FootballComments?  @relation("parent", fields: [parentNo], references: [no])
+
+  isChild  Boolean @default(false)
+  isModify Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

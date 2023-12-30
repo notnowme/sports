@@ -7,6 +7,7 @@ import { NavigationTop } from '@/components/navigation/navigation-top'
 import { ChatButton } from '@/components/chat/chat-button'
 import RecoilProvider from '@/components/providers/recoil-provider'
 import ChatContainer from '@/components/chat/chat-container'
+import NextSessionProvider from '@/components/providers/session-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,17 +25,19 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className}, flex flex-col items-center bg-white dark:bg-[#121212]`}>
         <RecoilProvider>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='dark'
-            enableSystem={false}
-            storageKey='embers-theme'
-          >
-            <NavigationTop />
-            {children}
-            <ChatButton />
-            <ChatContainer />
-          </ThemeProvider>
+          <NextSessionProvider>
+            <ThemeProvider
+              attribute='class'
+              defaultTheme='dark'
+              enableSystem={false}
+              storageKey='embers-theme'
+            >
+              <NavigationTop />
+              {children}
+              <ChatButton />
+              <ChatContainer />
+            </ThemeProvider>
+          </NextSessionProvider>
         </RecoilProvider>
       </body>
     </html>

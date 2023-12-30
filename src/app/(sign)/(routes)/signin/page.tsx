@@ -7,6 +7,8 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
+import { signIn } from 'next-auth/react'
+
 const SignIn = () => {
     const [showPw, setShowPw] = useState(false)
     const [inputs, setInputs] = useState({
@@ -43,7 +45,18 @@ const SignIn = () => {
     }
     const handleSubmit = async(e: React.MouseEvent) => {
         e.preventDefault()
-        console.log(id, password)
+        const result = await signIn('credentials', {
+            id,
+            password,
+            redirect: false,
+        });
+        if(result?.error === 'no id') {
+            // 나중에 아이디 없을 때 처리.
+            console.log('없는 아이디다.');
+        } else if (result?.error === 'wrong pw') {
+            // 나중에 비밀번호 틀렸을 때 처리.
+            console.log('비밀번호가 틀렸다.');
+        }
     }
     return (
         <div className="mt-20 flex flex-col justify-center items-center w-full max-w-[580px] rounded-md p-10 bg-[#1D1D1D]">
