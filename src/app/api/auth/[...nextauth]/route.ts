@@ -1,8 +1,11 @@
+import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextResponse } from "next/server";
 
-const handler = NextAuth({
+
+
+export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({ // 회원가입 메소드
             name: 'Credentials',
@@ -51,6 +54,7 @@ const handler = NextAuth({
     pages: {
         signIn: '/signin'
     },
-});
+}
+const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST }
+export {handler as GET, handler as POST};

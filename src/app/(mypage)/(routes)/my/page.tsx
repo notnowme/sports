@@ -1,28 +1,54 @@
+'use client';
+
 import {
     Camera,
     FileEdit,
     MessageCircle
 } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import Image from 'next/image'
+
+import { User, FootballBoard, FootballComments } from '@prisma/client';
+
+interface UserWithBoards extends User {
+    free: FootballBoard[];
+    comments: FootballComments[];
+}
 
 const MyPage = () => {
-    // 가입 날짜
-    // 마지막 접속 기록
-    // 작성 글 수
-    // 작성 댓글 수
+    const [user, setUser] = useState<UserWithBoards>()
+    useEffect(() => {
+        const test = async() => {
+            try {
+                const res = await fetch('/api/my', {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                console.log(data);
+                setUser(prev => data);
+            } catch(err) {
+                console.log(err);
+            }
+        };
+        test();
+    },[])
 
     return (
         <div className="flex flex-col w-full items-start">
             <div className="flex rounded-md p-2 bg-[#1D1D1D]">
                 <div className="relative flex flex-col w-[200px] justify-center items-center">
-                    <div className="relative w-[120px] h-[120px] bg-[#292929] rounded-[16px]">
-
+                    <div className="relative w-[120px] h-[120px] bg-[#292929] rounded-[16px] overflow-hidden">
+                        <Image
+                            src={user?.imageUrl ? user.imageUrl : '/img/yuumi.webp'} fill alt='user_image'
+                            className='object-cover'
+                        />
                     </div>
                     <div className="mt-4 flex flex-col items-center">
                         <span className="text-base">
-                            이름
+                            {user?.nick}
                         </span>
                         <span className="text-sm text-[#777]">
-                            아이디
+                            {user?.id}
                         </span>
                     </div>
                     <div className='mt-2 flex gap-x-2'>
@@ -36,12 +62,16 @@ const MyPage = () => {
                     <div className='ml-4 flex flex-col justify-center items-center w-[200px] h-full'>
                         <FileEdit className='w-[70px] h-[70px]' strokeWidth={1} />
                         <span className='text-base'>작성 글 수</span>
-                        <span className='mt-2 text-3xl font-semibold'>10</span>
+                        <span className='mt-2 text-3xl font-semibold'>
+                            {user?.free?.length}
+                        </span>
                     </div>
                     <div className='ml-4 flex flex-col justify-center items-center w-[200px] h-full'>
                         <MessageCircle className='w-[70px] h-[70px]' strokeWidth={1} />
                         <span className='text-base'>작성 댓글 수</span>
-                        <span className='mt-2 text-3xl font-semibold'>10</span>
+                        <span className='mt-2 text-3xl font-semibold'>
+                        {user?.comments?.length}
+                        </span>
                     </div>
                 </div>
             </div>
