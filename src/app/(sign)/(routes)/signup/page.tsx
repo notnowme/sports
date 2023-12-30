@@ -62,25 +62,30 @@ const SignUp = () => {
         setBirth('');
     }
     const handleIdChk = async() => {
-        const res = await fetch('/api/sign', {
-            method: 'POST',
-            headers: {
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-                id
-            })
-        });
-        const result = await res.json();
-        if(res.status === 400) {
-            // 아이디가 있다.
-            alert('이미 있는 아이디입니다.')
-            setInputs(prev => {
-                return {...prev, id: ''}
+        try {
+            const res = await fetch('/api/sign', {
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    id
+                })
             });
-        } else if(res.status === 200) {
-            // 아이디가 없다.
-            setIdChk(true);
+            if(res.status === 400) {
+                // 아이디가 있다.
+                alert('이미 있는 아이디입니다.')
+                setInputs(prev => {
+                    return {...prev, id: ''}
+                });
+            } else if(res.status === 200) {
+                // 아이디가 없다.
+                setIdChk(true);
+            } else if(res.status === 500) {
+                console.error('서버 에러.');
+            }
+        } catch(err) {
+            console.log(err)
         }
     }
     const handleSubmit = async (e: React.MouseEvent) => {
