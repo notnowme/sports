@@ -6,7 +6,7 @@ import { ChevronDown, LogOut, UserRound } from 'lucide-react'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 
 // 단계 1: #121212
 // 단계 2: #1D1D1D
@@ -99,6 +99,22 @@ const MyModalMenu = ({ isOpen, onClose }: { isOpen: boolean, onClose: Dispatch<S
         </>
     )
 }
+
+const authTokenVerify = async(token: string) => {
+    try {
+        const res = await fetch('/api/auth', {
+            method: 'POST',
+            headers: {
+                'Authorization': token
+            }
+        });
+        const result = await res.json();
+        return result.msg;
+    } catch(err) {
+        console.log('[AUTH_TOKEN_VERIFY_ERROR]');
+        return false;
+    }
+}
 export const NavigationTop = () => {
     const router = useRouter();
     const [menu, setMenu] = useState(false);
@@ -109,6 +125,71 @@ export const NavigationTop = () => {
 
     // 로그인 여부 확인하는 enum.
     const isLogin = session && session.user;
+
+    // 주기적으로 토큰 만료 기간을 검증함.
+    useEffect(() => {
+        const verifyTokenExpired = async() => {
+            if(!isLogin) return;
+            const accessTokenCheck = await authTokenVerify(session.user?.accessToken as string);
+            if(!accessTokenCheck) {
+                console.log(`[ACCESS_TOKEN_VERIFY_ERROR]`);
+                return;
+            }
+            if(accessTokenCheck === 'Token was expired') {
+                const res = await fetch('/api/auth', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: session.user?.id
+                    })
+                });
+                const result = await res.json();
+                const refreshTokenCheck = await authTokenVerify(result.refreshToken);
+                if(!refreshTokenCheck) {
+                    console.log(`[REFRESH_TOKEN_VERIFY_ERROR]`);
+                    return;
+                }
+                if(refreshTokenCheck === 'ok') {
+                    const userInfo = {
+                        id: session.user?.id,
+                        nick: session.user?.nick,
+                        provider: session.user?.provider,
+                        role: session.user?.role
+                    }
+                    const createRes = await fetch('/api/auth', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            userInfo
+                        })
+                    });
+                    const createResult = await createRes.json();
+                    if(session.user) {
+                        session.user.accessToken = createResult
+                    };
+                    router.refresh();
+                    router.push('/');
+                    return;
+                }
+                if(refreshTokenCheck === 'Token was expired') {
+                    alert('토큰이 만료되었습니다. 다시 로그인해 주세요.');
+                    signOut({callbackUrl: '/signin'});
+                    return;
+                }
+            }
+        }
+
+        verifyTokenExpired();
+
+        const verifyTokenInterval = setInterval(async() => {
+            await verifyTokenExpired();
+        }, 60 * 5 * 1000);
+        return () => clearInterval(verifyTokenInterval);
+    },[isLogin])
     return (
         <nav className="relative w-full max-w-[1280px] flex h-[62px] items-center justify-between px-5 py-3">
             <div

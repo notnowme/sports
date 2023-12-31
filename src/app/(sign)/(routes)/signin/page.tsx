@@ -8,8 +8,10 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 
 const SignIn = () => {
+    const params = useSearchParams();
     const [showPw, setShowPw] = useState(false)
     const [inputs, setInputs] = useState({
         id: '',
@@ -36,33 +38,25 @@ const SignIn = () => {
         }
         setInputs(updateInputs)
     }
-    const onReset = () => {
-        const updateInputs = {
-            id: '',
-            password: ''
-        }
-        setInputs(prev => updateInputs)
-    }
     const handleSubmit = async(e: React.MouseEvent) => {
         e.preventDefault()
         const result = await signIn('credentials', {
             id,
             password,
-            redirect: false,
+            redirect: true,
+            callbackUrl: '/'
         });
-        if(result?.error === 'no id') {
-            // 나중에 아이디 없을 때 처리.
-            console.log('없는 아이디다.');
-        } else if (result?.error === 'wrong pw') {
-            // 나중에 비밀번호 틀렸을 때 처리.
-            console.log('비밀번호가 틀렸다.');
-        }
     }
     return (
         <div className="mt-20 flex flex-col justify-center items-center w-full max-w-[580px] rounded-md p-10 bg-[#1D1D1D]">
             <div className="w-full flex justify-center items-center mt-2 mb-10">
                 <Image src={`/img/temp-logo.webp`} width={50} height={50} alt='logo' />
                 <span className='text-3xl'>embers</span>
+            </div>
+            <div>
+                {params.get('error') && (
+                    <span>{params.get('error') === 'no id' ? "없는 아이디" : "비밀번호 틀림"}</span>
+                )}
             </div>
             <div className='w-full'>
                 <form className='w-full flex flex-col justify-center items-center'>

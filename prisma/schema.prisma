@@ -11,14 +11,17 @@ datasource db {
 }
 
 model User {
-  no   Int    @id @default(autoincrement())
-  id   String @unique
-  pw   String
+  no Int    @id @default(autoincrement())
+  id String @unique
+  pw String
 
   nick     String
   birth    String
   provider String
   imageUrl String?
+
+  role         UserRole      @default(NORMAL)
+  refreshToken RefreshToken?
 
   free     FootballBoard[]
   comments FootballComments[]
@@ -33,12 +36,21 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-// 리프레시 토큰 모델 생성하기.
-// 지금은 테스트로 jwt 없이 함.
+model RefreshToken {
+  refreshToken String
+  userId       String @unique
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum UserRole {
+  ADMIN
+  MODERATOR
+  NORMAL
+}
 
 model FootballBoard {
   no       Int     @id @default(autoincrement())
-  team String
+  team     String
   title    String
   content  String
   imageUrl String?
