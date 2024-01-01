@@ -36,6 +36,7 @@ export async function POST(req: Request) {
         const check = await bcrypt.compare(password, user.pw);
         if(check) {
             const userInfo = {
+                no: user.no,
                 id: user.id,
                 nick: user.nick,
                 provider: user.provider,

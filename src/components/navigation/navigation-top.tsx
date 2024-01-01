@@ -153,6 +153,7 @@ export const NavigationTop = () => {
                 }
                 if(refreshTokenCheck === 'ok') {
                     const userInfo = {
+                        no: session.user?.no,
                         id: session.user?.id,
                         nick: session.user?.nick,
                         provider: session.user?.provider,
@@ -172,7 +173,6 @@ export const NavigationTop = () => {
                         session.user.accessToken = createResult
                     };
                     router.refresh();
-                    router.push('/');
                     return;
                 }
                 if(refreshTokenCheck === 'Token was expired') {

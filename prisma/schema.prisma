@@ -50,6 +50,7 @@ enum UserRole {
 
 model FootballBoard {
   no       Int     @id @default(autoincrement())
+  category String
   team     String
   title    String
   content  String

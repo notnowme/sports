@@ -1,17 +1,75 @@
 'use client'
 
+import { FootballComments, UserRole } from '@prisma/client';
 import {
     MoreHorizontal
 } from 'lucide-react'
 
 
 import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
-const ContentMenu = ({isOpen, onClose}: {isOpen: boolean, onClose: Dispatch<SetStateAction<boolean>>}) => {
-    const modalRef = useRef<HTMLDivElement>(null)
+
+import moment from 'moment';
+import { useRouter } from 'next/navigation';
+
+interface Author {
+    id: string;
+    nick: string;
+    role: UserRole
+}
+interface CommentWithAuthor extends FootballComments {
+    author: Author;
+}
+interface SportFreeCommentProps {
+    data: CommentWithAuthor;
+    author: string | undefined
+}
+
+const ContentMenu = (
+    {isOpen, onClose, data, modify, setModify, setText} :
+    {   data: CommentWithAuthor,
+        isOpen: boolean,
+        onClose: Dispatch<SetStateAction<boolean>>,
+        modify: boolean,
+        setModify: Dispatch<SetStateAction<boolean>>,
+        setText: Dispatch<SetStateAction<string>>
+    }
+    ) => {
+    const modalRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     const handleOutsideClick = (e: any) => {
+        if(modify) return;
         if(modalRef.current && !modalRef.current.contains(e.target)) {
-            onClose(prev => false)
+            onClose(prev => false);
+            setModify(prev => false);
+            setText(prev => data.content);
+        }
+    }
+
+    const handleDelete = async() => {
+        const check = prompt("'삭제합니다.'를 정확히 입력해 주세요.");
+        if(check !== '삭제합니다.') return;
+        const res = await fetch('/api/comment', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+                no: data.no,
+                id: data.author.id
+            })
+        });
+        const result = await res.json();
+        console.log(result);
+        router.refresh();
+    }
+    const handleModifyChk = () => {
+        if(modify) {
+            onClose(false);
+            setModify(false);
+            setText(prev => data.content);
+        } else {
+            setModify(true);
         }
     }
     useEffect(() => {
@@ -23,7 +81,7 @@ const ContentMenu = ({isOpen, onClose}: {isOpen: boolean, onClose: Dispatch<SetS
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick)
         }
-    },[isOpen])
+    },[isOpen, modify])
 
     return (
         <>
@@ -31,8 +89,18 @@ const ContentMenu = ({isOpen, onClose}: {isOpen: boolean, onClose: Dispatch<SetS
             isOpen && (
                 <div ref={modalRef}
                 className='absolute top-[9px] right-[-100px] w-[150px] flex justify-center items-center gap-x-2'>
-                <button className='px-3 py-2 bg-[#343434] rounded-md text-sm'>수정</button>
-                <button className='px-3 py-2 bg-[#343434] rounded-md text-sm'>삭제</button>
+                <button
+                    className='px-3 py-2 bg-[#343434] rounded-md text-sm'
+                    onClick={handleModifyChk}
+                >
+                    {modify ? '취소' : '수정'}
+                </button>
+                <button
+                    className='px-3 py-2 bg-[#343434] rounded-md text-sm'
+                    onClick={handleDelete}
+                >
+                    삭제
+                </button>
             </div>
             )
         }
@@ -40,10 +108,44 @@ const ContentMenu = ({isOpen, onClose}: {isOpen: boolean, onClose: Dispatch<SetS
     )
 }
 
-const SportFreeComment = () => {
-    const [showContentMenu, setShowContentMenu] = useState(false)
+const SportFreeComment = ({data, author}: SportFreeCommentProps) => {
+    const [showContentMenu, setShowContentMenu] = useState(false);
+    const [modify, setModify] = useState(false);
+    const [text, setText] = useState(data.content);
+    const router = useRouter();
     const handleShowMenu = () => {
         setShowContentMenu(prev => true)
+    }
+    const handleModify = async() => {
+        if(!text) {
+            alert('내용을 입력해 주세요.');
+            return;
+        }
+        if(text === data.content) {
+            alert('수정한 내용이 없습니다.');
+            return;
+        }
+        try {
+            const res = await fetch('/api/comment', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    content: text,
+                    no: data.no,
+                    id: author
+                })
+            });
+            const result = await res.json();
+            console.log(result);
+            setModify(false);
+            setShowContentMenu(false);
+            router.refresh();
+        } catch(err) {
+            console.log(`[COMMENT_MODIFY_ERR]`, err);
+            return;
+        }
     }
     return (
         <div className='w-full flex flex-col mb-10'>
@@ -53,23 +155,46 @@ const SportFreeComment = () => {
                 </div>
                 <div className='flex flex-col'>
                     <div className='relative flex items-center'>
-                        <span className='text-base mr-2'>작성ddddd자</span>
-                        <span className='text-sm text-[#777] mr-2'>23. 12. 24</span>
-                        <div className='relative'>
-                            <MoreHorizontal
-                                onClick={handleShowMenu}
-                                className='text-[#777]'
-                            />
-                            <ContentMenu isOpen={showContentMenu} onClose={setShowContentMenu}/>
-                        </div>
+                        <span className='text-base mr-2'>{data.author.nick}</span>
+                        <span className='text-sm text-[#777] mr-2'>
+                            {moment(data.createdAt).format('YY. MM. DD')}
+                        </span>
+                        {author === data?.author.id && (
+                            <div className='relative'>
+                                <MoreHorizontal
+                                    onClick={handleShowMenu}
+                                    className='text-[#777] cursor-pointer hover:text-[#ccc]'
+                                />
+                                <ContentMenu
+                                    isOpen={showContentMenu}
+                                    onClose={setShowContentMenu}
+                                    modify={modify}
+                                    setModify={setModify}
+                                    data={data}
+                                    setText={setText}
+                                />
+                            </div>
+                        )}
                     </div>
-                    <pre className='text-base font-pretendard whitespace-pre-line'>
-                        asdfasfasdfasdfasfdasdasdfasdfasdfasdfasdfadsadsfasdfjlkasdfjkl{'\n'}
-                        asdfasfasdfasdfasfdasdasdfasdfasdfasdfasdfadsadsfasdfjlkasdfjkl{'\n'}
-                        asdfasfasdfasdfasfdasdasdfasdfasdfasdfasdfadsadsfasdfjlkasdfjkl{'\n'}
-                        asdfasfasdfasdfasfdasdasdfasdfasdfasdfasdfadsadsfasdfjlkasdfjkl{'\n'}
-                        adfajsdlfasdjflkasdf아아아아ㅇㅁ라ㅣㅁㄴㅇ리ㅏㅓㅁㄴㅇ리ㅏㅇ러ㅏㅣㅁㅇㄹㄴ미ㅏ
-                    </pre>
+                    {modify ? (
+                        <div className='mt-10 flex flex-col w-[600px]'>
+                            <textarea
+                                className='mb-4 w-full outline-none h-[100px] p-2 resize-none'
+                                value={text}
+                                onChange={(e) => setText(prev => e.target.value)}
+                            />
+                            <button
+                                className='bg-[#444] p-1'
+                                onClick={handleModify}
+                            >
+                                수정하기
+                            </button>
+                        </div>
+                    ) : (
+                        <pre className='text-base font-pretendard whitespace-pre-line'>
+                            {data.isModify && <span className='text-sm text-[#444]'>(수정됨) </span>} {data.content}
+                        </pre>
+                    )}
                 </div>
             </div>
         </div>
