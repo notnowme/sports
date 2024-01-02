@@ -20,13 +20,13 @@ const categoryMap = (cat: string) => {
     return cat === 'normal' ? '잡담' : '후기';
 }
 
-const SportFreeItem = ({ data, sports, team }: {data: BoardWithAuthor, sports: string, team: string}) => {
+const SportFreeItem = ({ data, sports, team, page }: {data: BoardWithAuthor, sports: string, team: string, page: number}) => {
     return (
         <div className='flex items-center justify-between w-full p-2 rounded-md text-base hover:bg-[#343434]'>
             <div className='flex items-center'>
                 <span className='w-[40px] p-1 rounded-md mr-2 text-center text-sm bg-[#292929]'>{categoryMap(data.category)}</span>
                 <Link
-                    href={`/sports/${sports}/${team}/free/${data.no}`}
+                    href={`/sports/${sports}/${team}/free/${data.no}?page=${page}`}
                     className="p-1 mr-2"
                 >
                     {data.title}

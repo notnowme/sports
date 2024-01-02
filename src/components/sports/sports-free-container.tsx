@@ -29,7 +29,7 @@ const SportFreeContainer = ({boardTitle, team, sports}: SportFreeContainerProps)
 
     useEffect(() => {
         const getData = async() => {
-            const res = await fetch(`/api/board/?team=${team}`, {
+            const res = await fetch(`/api/board/latest/?team=${team}`, {
                 method: 'GET',
                 cache: 'no-store'
             });
@@ -49,6 +49,7 @@ const SportFreeContainer = ({boardTitle, team, sports}: SportFreeContainerProps)
                                 sports={sports}
                                 team={data.team}
                                 data={data}
+                                page={1}
                             />
                         ))}
                 </div>

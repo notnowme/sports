@@ -189,7 +189,7 @@ export const NavigationTop = () => {
             await verifyTokenExpired();
         }, 60 * 5 * 1000);
         return () => clearInterval(verifyTokenInterval);
-    },[isLogin])
+    },[isLogin, session?.user?.accessToken])
     return (
         <nav className="relative w-full max-w-[1280px] flex h-[62px] items-center justify-between px-5 py-3">
             <div

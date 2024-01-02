@@ -10,6 +10,7 @@ import SportFreeItem from "@/components/sports/sports-free-item";
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { FootballBoard, UserRole } from '@prisma/client';
+import Pagination from '../pagination';
 
 interface BoardWithAuthor extends FootballBoard{
     author: {
@@ -26,12 +27,14 @@ interface BoardWithAuthor extends FootballBoard{
 }
 
 interface SportBoardPageLayout {
-    data: BoardWithAuthor[]
-    params?: {team: string}
-    children?: React.ReactNode
-    sports: string
+    data: BoardWithAuthor[];
+    count: number;
+    page: number;
+    team: string;
+    children?: React.ReactNode;
+    sports: string;
 }
-const SportsBoardMain = ({data, children, sports}: SportBoardPageLayout) => {
+const SportsBoardMain = ({data, children, sports, team, count, page}: SportBoardPageLayout) => {
     const pathname = usePathname().split('/')
     return (
         <div className="flex flex-col w-full p-2">
@@ -57,6 +60,7 @@ const SportsBoardMain = ({data, children, sports}: SportBoardPageLayout) => {
                         data={data}
                         sports={sports}
                         team={pathname[3]}
+                        page={page}
                     />
                 ))}
             </div>
@@ -84,28 +88,10 @@ const SportsBoardMain = ({data, children, sports}: SportBoardPageLayout) => {
                 </div>
             </div>
             <div className="mt-10 w-full p-2 flex items-center justify-center gap-x-3">
-                <button
-                    className='p-1 rounded-md bg-[#292929]'
-                >
-                    <ChevronLeft className='w-5 h-5 hover:text-[#00A495]' />
-                </button>
-                <div className='flex items-center bg-[#292929] rounded-md h-[35px]'>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#444] text-[#00A495]'>1</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>2</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>3</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>4</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>5</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>6</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>7</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>8</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>9</button>
-                    <button className='p-1 w-[35px] h-[35px] text-center rounded-md bg-[#292929] hover:text-[#00A495] hover:border hover:border-[#444]'>10</button>
-                </div>
-                <button
-                    className='p-1 rounded-md bg-[#292929]'
-                >
-                    <ChevronRight className='w-5 h-5 hover:text-[#00A495]' />
-                </button>
+                    <Pagination
+                        total={count} limit={10} page={page}
+                        sports={sports} team={team}
+                    />
             </div>
         </div>
     );

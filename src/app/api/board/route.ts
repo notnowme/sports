@@ -13,8 +13,19 @@ interface WriteProps {
 // 모든 게시글 가져오는 메소드.
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') as string);
+    const pageSize = 10;
+    const skip = (page - 1) * pageSize || 0;
+
     try {
+        const count = await db.footballBoard.count({
+            where: {
+                team: searchParams.get('team') as string || undefined
+            }
+        });
         const boards = await db.footballBoard.findMany({
+            skip,
+            take: pageSize,
             where: {
                 team: searchParams.get('team') as string || undefined
             },
@@ -38,7 +49,7 @@ export async function GET(req: Request) {
                 }
             },
         });
-        return NextResponse.json(boards);
+        return NextResponse.json({boards, count});
     } catch(err) {
         console.log(`[BOARD_GET_ERROR]`, err);
         return new NextResponse(JSON.stringify({msg: 'Internal Server Error'}), { status: 500 })

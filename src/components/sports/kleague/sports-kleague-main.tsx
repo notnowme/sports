@@ -29,11 +29,12 @@ const SportsKleagueMain = () => {
 
     useEffect(() => {
         const getData = async() => {
-            const res = await fetch(`/api/board`, {
+            const res = await fetch(`/api/board/latest`, {
                 method: 'GET',
                 cache: 'no-store'
             });
             const result = await res.json();
+            console.log(result);
             setData(result);
         }
         getData();
@@ -77,6 +78,7 @@ const SportsKleagueMain = () => {
                                 sports='kleague'
                                 team={data.team}
                                 data={data}
+                                page={1}
                             />
                         ))}
                     </div>

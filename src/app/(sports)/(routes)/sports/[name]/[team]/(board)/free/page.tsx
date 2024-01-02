@@ -7,8 +7,8 @@ interface IPrams {
     }
 }
 
-async function getData(team: string) {
-    const res = await fetch(`${[process.env.NEXTAUTH_URL]}/api/board/?team=${team}`, {
+async function getData(team: string, page: string) {
+    const res = await fetch(`${[process.env.NEXTAUTH_URL]}/api/board/?team=${team}&page=${page}`, {
         method: 'GET',
         cache: 'no-store'
     });
@@ -18,11 +18,16 @@ async function getData(team: string) {
     }
     return res.json();
 }
-const SportsTeamBoard = async({params}: IPrams) => {
-    const data = await getData(params.team);
-    console.log(data);
+const SportsTeamBoard = async(
+    {params, searchParams}:
+    {params: {name: string, team: string}, searchParams: any}
+) => {
+
+    const page = searchParams.page;
+    const data = await getData(params.team, page);
+    
     return (
-        <SportsBoardMain data={data} sports={params.name}/>
+        <SportsBoardMain data={data.boards} count={data.count} sports={params.name} team={params.team} page={page}/>
     );
 }
  
