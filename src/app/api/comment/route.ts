@@ -34,6 +34,63 @@ export async function PUT(req: Request) {
     }
 };
 
+// 댓글 좋아요 메소드.
+export async function POST(req: Request) {
+    try {
+        const body = await req.json();
+        const { no } = body;
+        const session = await getServerSession(authOptions);
+        if(!session) {
+            return new NextResponse(JSON.stringify({msg: 'Unauthorized'}), {status: 401})
+        }
+        const isLike = await db.footballComments.count({
+            where: {
+                no: parseInt(no),
+                likes: {
+                    some: {
+                        no: session.user?.no as number
+                    }
+                }
+            }
+        });
+        if(isLike === 1) {
+            // 좋아요 눌렀을 경우 취소.
+
+            await db.footballComments.update({
+                where: {
+                    no: parseInt(no)
+                },
+                data: {
+                    likes: {
+                        disconnect: {
+                            no: session.user?.no as number
+                        }
+                    }
+                }
+            })
+        } else {
+            // 0일 경우 좋아요.
+
+            await db.footballComments.update({
+                where: {
+                    no: parseInt(no)
+                },
+                data: {
+                    likes: {
+                        connect: {
+                            no: session.user?.no as number
+                        }
+                    }
+                }
+            })
+        }
+        return new NextResponse(JSON.stringify({msg: 'ok'}), {status: 200});
+    } catch(err) {
+        console.log(`[COMMENT_POST_ERROR]`, err);
+        return new NextResponse(JSON.stringify({msg: 'Internal Server Error'}), { status: 500 })
+    }
+}
+
 // 댓글 수정 메소드.
 export async function PATCH(req: Request) {
     try {

@@ -8,7 +8,6 @@ interface TeamPageLayoutProps {
 }
 
 const TeamPageLayout = ({children, params}: TeamPageLayoutProps) => {
-    console.log(params.team)
     return (
         <div className="relative mt-5 flex flex-col w-full max-w-[1280px]">
             {/* <div className='relative w-full h-[500px] bg-[#1D1D1D] mb-10'>

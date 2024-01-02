@@ -18,8 +18,19 @@ export async function POST() {
                 id
             },
             include: {
-                free: true,
-                comments: true,
+                free: {
+                    take: 6,
+                    orderBy: {
+                        createdAt: 'asc'
+                    },
+                    
+                },
+                comments: {
+                    take: 6,
+                    orderBy: {
+                        createdAt: 'asc'
+                    }
+                }
             }
         });
 

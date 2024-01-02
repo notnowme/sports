@@ -13,7 +13,7 @@ const MainBoard = () => {
             <div className="flex flex-col justify-center w-full h-full mt-[10px]">
                 {arr.map((data, index) => (
                     <React.Fragment key={index}>
-                        <SportFreeItem tag='잡담' />
+                        {/* <SportFreeItem tag='잡담' /> */}
                     </React.Fragment>
                 ))}
             </div>

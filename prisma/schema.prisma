@@ -26,11 +26,9 @@ model User {
   free     FootballBoard[]
   comments FootballComments[]
 
-  freeNo   Int?
-  freeLike FootballBoard? @relation("like", fields: [freeNo], references: [no], onDelete: Cascade)
+  freeLike FootballBoard[] @relation("boardLike")
 
-  footballCommentNo    Int?
-  footballCommentLikes FootballComments? @relation("like", fields: [footballCommentNo], references: [no], onDelete: Cascade)
+  footballCommentLikes FootballComments[] @relation("commentLike")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -61,7 +59,7 @@ model FootballBoard {
   authorNo Int
   author   User @relation(fields: [authorNo], references: [no], onDelete: Cascade)
 
-  likes User[] @relation("like")
+  likes User[] @relation("boardLike")
 
   comment FootballComments[]
 
@@ -76,7 +74,7 @@ model FootballComments {
   authorNo Int
   author   User @relation(fields: [authorNo], references: [no], onDelete: Cascade)
 
-  likes User[] @relation("like")
+  likes User[] @relation("commentLike")
 
   footballBaordNo Int
   footballBoard   FootballBoard @relation(fields: [footballBaordNo], references: [no], onDelete: Cascade)

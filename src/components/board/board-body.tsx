@@ -5,7 +5,8 @@ import { FootballBoard, FootballComments, UserRole } from '@prisma/client';
 import {
     MessageSquare,
     Eye,
-    MoreHorizontal
+    MoreHorizontal,
+    Heart
 } from 'lucide-react'
 import { useState, useRef, useEffect, SetStateAction, Dispatch, useLayoutEffect } from 'react';
 import moment from 'moment';
@@ -20,6 +21,7 @@ interface Author {
 }
 interface CommentWithAuthor extends FootballComments {
     author: Author;
+    likes: Author[];
 }
 interface BoardWithUserWithComment extends FootballBoard {
     author: Author;
@@ -84,7 +86,12 @@ const ContentMenu = (
                 isOpen && (
                     <div ref={modalRef}
                         className='absolute top-[9px] right-[-100px] w-[150px] flex justify-center items-center gap-x-2'>
-                        <button className='px-3 py-2 bg-[#343434] rounded-md text-sm'>수정</button>
+                        <button
+                            className='px-3 py-2 bg-[#343434] rounded-md text-sm'
+                            onClick={() => router.push(`${url}/modify/${data.no}`)}
+                        >
+                            수정
+                        </button>
                         <button 
                             className='px-3 py-2 bg-[#343434] rounded-md text-sm'
                             onClick={handleDelete}
@@ -109,6 +116,9 @@ const BoardBodyPage = ({data, isLogin}: BoardBodyPageProps) => {
         setShowContentMenu(prev => true)
     }
     const { data: session } = useSession();
+
+    // 일치하는 아이디가 있다면 true
+    const isLike = data.likes.some(el => el.id === session?.user?.id);
     useLayoutEffect(() => {
         if(!data) {
             alert('없는 게시글입니다.');
@@ -146,6 +156,29 @@ const BoardBodyPage = ({data, isLogin}: BoardBodyPageProps) => {
             }
         }
     };
+    const handleLike = async(no: number) => {
+        if(!session || !session.user) {
+            alert('로그인한 유저만 좋아요 가능');
+            return;
+        }
+        try {
+            const res = await fetch(`/api/board/${no}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    no
+                })
+            });
+            const result = await res.json();
+            console.log(result);
+            router.refresh();
+        } catch(err) {
+            console.log(`[BOARD_LIKE_ERROR]`, err);
+            return;
+        }
+    }
     return (
         <div className="w-full flex flex-col bg-[#1D1D1D] p-4 mt-5 mb-10">
             <div className="w-full flex items-center mb-10">
@@ -174,7 +207,12 @@ const BoardBodyPage = ({data, isLogin}: BoardBodyPageProps) => {
             </div>
             <div className="w-full flex flex-col">
                 <span className="text-base mb-2">{categoryText(data?.category)}</span>
-                <span className="text-3xl font-semibold">{data?.title}</span>
+                <span className="text-3xl font-semibold">
+                    {data?.title}
+                    {data?.isModify && (
+                        <span className='ml-1 text-sm text-[#444]'>(수정됨)</span>
+                    )}
+                </span>
                 <div className='flex items-center gap-x-4 mt-2'>
                     <div className="flex items-center gap-x-1">
                         <div className='flex gap-x-2'>
@@ -194,6 +232,18 @@ const BoardBodyPage = ({data, isLogin}: BoardBodyPageProps) => {
                                 className='w-6 h-6'
                             />
                             <span className='text-base text-[#777]'>1</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-x-1">
+                        <div className='flex gap-x-2'>
+                            <Heart
+                                strokeWidth={1}
+                                className={`w-6 h-6 cursor-pointer ${isLike ? 'text-rose-500 fill-rose-500' : ''}`}
+                                onClick={() => handleLike(data.no)}
+                            />
+                            <span className='text-base text-[#777]'>
+                                {data.likes.length}    
+                            </span>
                         </div>
                     </div>
                 </div>

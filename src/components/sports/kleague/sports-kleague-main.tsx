@@ -7,9 +7,37 @@ import SportsReviewList from '@/components/sports/sports-review'
 import SportsMeetList from '@/components/sports/sports-meet'
 import SportMatchContainer from '../sports-match-container'
 import SportFreeItem from '../sports-free-item'
+import { useEffect, useState } from 'react'
+import { FootballBoard, UserRole } from '@prisma/client'
+
+interface BoardWithAuthor extends FootballBoard{
+    author: {
+        id: string;
+        nick: string;
+        role: UserRole
+    }
+    likes: {
+        id: string
+    }[]
+    comment: {
+        authorNo: number
+    }[]
+}
 
 const SportsKleagueMain = () => {
+    const [data, setData] = useState<BoardWithAuthor[]>()
 
+    useEffect(() => {
+        const getData = async() => {
+            const res = await fetch(`/api/board`, {
+                method: 'GET',
+                cache: 'no-store'
+            });
+            const result = await res.json();
+            setData(result);
+        }
+        getData();
+    },[])
     return (
         <div className="mt-20 flex flex-col w-full max-w-[1280px]">
             <div className="flex w-full justify-between">
@@ -43,11 +71,14 @@ const SportsKleagueMain = () => {
                         <span>오늘 경기 후기</span>
                     </div>
                     <div className='flex flex-col w-full rounded-md bg-[#1D1D1D] p-2 gap-y-1'>
-                        <SportFreeItem tag='잡담' />
-                        <SportFreeItem tag='잡담' />
-                        <SportFreeItem tag='잡담' />
-                        <SportFreeItem tag='잡담' />
-                        <SportFreeItem tag='잡담' />
+                        {data && data.map(data => (
+                            <SportFreeItem
+                                key={data.no}
+                                sports='kleague'
+                                team={data.team}
+                                data={data}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

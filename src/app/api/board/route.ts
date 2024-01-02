@@ -10,6 +10,41 @@ interface WriteProps {
     team: string;
 }
 
+// 모든 게시글 가져오는 메소드.
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    try {
+        const boards = await db.footballBoard.findMany({
+            where: {
+                team: searchParams.get('team') as string || undefined
+            },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        nick: true,
+                        role: true
+                    }
+                },
+                likes: {
+                    select: {
+                        id: true
+                    }
+                },
+                comment: {
+                    select: {
+                        authorNo: true
+                    }
+                }
+            },
+        });
+        return NextResponse.json(boards);
+    } catch(err) {
+        console.log(`[BOARD_GET_ERROR]`, err);
+        return new NextResponse(JSON.stringify({msg: 'Internal Server Error'}), { status: 500 })
+    }
+}
+
 
 // 게시글 작성 메소드.
 export async function PUT(req: Request) {

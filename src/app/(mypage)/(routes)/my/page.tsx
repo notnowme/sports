@@ -12,6 +12,7 @@ import Image from 'next/image'
 import { User, FootballBoard, FootballComments } from '@prisma/client';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import moment from 'moment';
 
 interface UserWithBoards extends User {
     free: FootballBoard[];
@@ -137,49 +138,21 @@ const MyPage = () => {
             <div className='mt-10 flex gap-x-8'>
                 <div className='flex flex-col px-10 py-6 gap-y-2 rounded-md bg-[#1D1D1D]'>
                     <span className='text-3xl font-semibold mb-2'>나의 최근 작성 글</span>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
+                    {user && user.free.map(data => (
+                        <div key={data.no} className='group flex flex-col'>
+                            <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>{data.title}</span>
+                            <span className='text-sm text-[#777]'>{moment(data.createdAt).format('YY. MM. DD')}</span>
+                        </div>
+                    ))}
                 </div>
                 <div className='flex flex-col px-10 py-6 gap-y-2 rounded-md bg-[#1D1D1D]'>
                     <span className='text-3xl font-semibold mb-2'>나의 최근 작성 댓글</span>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
-                    <div className='group flex flex-col'>
-                        <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>작성 글 제목</span>
-                        <span className='text-sm text-[#777]'>23. 12. 24</span>
-                    </div>
+                    {user && user.comments.map(data => (
+                        <div key={data.no} className='group flex flex-col'>
+                            <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>{data.content.length > 10 ? data.content.substring(0,10) : data.content}</span>
+                            <span className='text-sm text-[#777]'>{moment(data.createdAt).format('YY. MM. DD')}</span>
+                        </div>
+                    ))}
                 </div>
                 <div className='flex flex-col px-10 py-6 rounded-md bg-[#1D1D1D] gap-y-4'>
                     <span className='text-3xl font-semibold mb-2'>최근 접속 기록</span>

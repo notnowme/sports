@@ -9,15 +9,30 @@ import {
 import SportFreeItem from "@/components/sports/sports-free-item";
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { FootballBoard, UserRole } from '@prisma/client';
+
+interface BoardWithAuthor extends FootballBoard{
+    author: {
+        id: string;
+        nick: string;
+        role: UserRole
+    }
+    likes: {
+        id: string
+    }[]
+    comment: {
+        authorNo: number
+    }[]
+}
 
 interface SportBoardPageLayout {
+    data: BoardWithAuthor[]
     params?: {team: string}
     children?: React.ReactNode
     sports: string
 }
-const SportsBoardMain = ({children, sports}: SportBoardPageLayout) => {
+const SportsBoardMain = ({data, children, sports}: SportBoardPageLayout) => {
     const pathname = usePathname().split('/')
-    console.log(pathname)
     return (
         <div className="flex flex-col w-full p-2">
             {children}
@@ -36,16 +51,14 @@ const SportsBoardMain = ({children, sports}: SportBoardPageLayout) => {
                 </div>
             </div>
             <div className="flex flex-col w-full p-2 bg-[#1D1D1D] rounded-md">
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
-                <SportFreeItem tag='잡담' />
+                {data.map(data => (
+                    <SportFreeItem
+                        key={data.no}
+                        data={data}
+                        sports={sports}
+                        team={pathname[3]}
+                    />
+                ))}
             </div>
             <div className='mt-4 flex items-center justify-end'>
                 <Link

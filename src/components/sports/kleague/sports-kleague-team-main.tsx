@@ -56,9 +56,13 @@ const SportsKleagueTeamMainPage = ({teamName}: TeamPageProps) => {
             </div>
             <SportFreeContainer
                 boardTitle='잡담/후기 게시판'
+                sports='kleague'
+                team={teamName}
             />
             <SportFreeContainer
                 boardTitle='맛집/모집 게시판'
+                sports='kleague'
+                team={teamName}
             />
         </>
     )
