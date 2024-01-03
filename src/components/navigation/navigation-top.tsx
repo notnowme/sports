@@ -4,9 +4,11 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, LogOut, UserRound } from 'lucide-react'
 import Link from 'next/link'
+
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import { signOut, useSession } from 'next-auth/react'
+import { getCsrfToken } from 'next-auth/react'
 
 // 단계 1: #121212
 // 단계 2: #1D1D1D
@@ -80,7 +82,7 @@ const MyModalMenu = ({ isOpen, onClose }: { isOpen: boolean, onClose: Dispatch<S
         <>
             {
                 isOpen && (
-                    <div ref={modalRef} className='absolute flex flex-col bg-[#292929] left-[50%] translate-x-[-50%] bottom-[-120px] items-start rounded-md p-2 w-[140px] gap-y-2'>
+                    <div ref={modalRef} className='absolute flex flex-col bg-[#333] left-[50%] translate-x-[-50%] bottom-[-120px] items-start rounded-md p-2 w-[140px] gap-y-2 z-50'>
                         <button
                             onClick={() => { router.push('/my'); onClose(false) }}
                             className='p-2 bg-[#1D1D1D] w-full rounded-md flex'>
@@ -172,6 +174,7 @@ export const NavigationTop = () => {
                     if(session.user) {
                         session.user.accessToken = createResult
                     };
+                    await getCsrfToken();
                     router.refresh();
                     return;
                 }
@@ -187,7 +190,7 @@ export const NavigationTop = () => {
 
         const verifyTokenInterval = setInterval(async() => {
             await verifyTokenExpired();
-        }, 60 * 5 * 1000);
+        }, 1000 * 60 * 5);
         return () => clearInterval(verifyTokenInterval);
     },[isLogin, session?.user?.accessToken])
     return (

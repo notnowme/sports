@@ -8,7 +8,7 @@ import {
     MoreHorizontal,
     Heart
 } from 'lucide-react'
-import { useState, useRef, useEffect, SetStateAction, Dispatch, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 import moment from 'moment';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -119,12 +119,7 @@ const BoardBodyPage = ({data, isLogin}: BoardBodyPageProps) => {
 
     // 일치하는 아이디가 있다면 true
     const isLike = data.likes.some(el => el.id === session?.user?.id);
-    useLayoutEffect(() => {
-        if(!data) {
-            alert('없는 게시글입니다.');
-            router.push('/');
-        }
-    },[])
+
     const handleSubmit = async() => {
         if(textRef.current) {
             const content = textRef.current.value;
@@ -179,6 +174,9 @@ const BoardBodyPage = ({data, isLogin}: BoardBodyPageProps) => {
             return;
         }
     }
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    },[])
     return (
         <div className="w-full flex flex-col bg-[#1D1D1D] p-4 mt-5 mb-10">
             <div className="w-full flex items-center mb-10">

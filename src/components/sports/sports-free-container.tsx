@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import SportFreeItem from "./sports-free-item";
 import { FootballBoard, UserRole } from "@prisma/client";
+import Link from "next/link";
 
 interface SportFreeContainerProps {
     boardTitle: string;
     team: string;
-    sports: string
+    sports: string;
+    type: 'free' | 'tasty';
 }
 
 interface BoardWithAuthor extends FootballBoard{
@@ -24,7 +26,7 @@ interface BoardWithAuthor extends FootballBoard{
     }[]
 }
 
-const SportFreeContainer = ({boardTitle, team, sports}: SportFreeContainerProps) => {
+const SportFreeContainer = ({boardTitle, team, sports, type}: SportFreeContainerProps) => {
     const [data, setData] = useState<BoardWithAuthor[]>()
 
     useEffect(() => {
@@ -41,7 +43,12 @@ const SportFreeContainer = ({boardTitle, team, sports}: SportFreeContainerProps)
     return (
         <div className='mt-5 p-2 rounded-md flex w-full max-w-[820px] gap-x-5'>
             <div className='flex flex-col w-full p-2'>
-                <h1 className='text-2xl'>{boardTitle}</h1>
+                <h1 className='text-2xl'>{boardTitle}
+                    <Link href={`/sports/${sports}/${team}/${type}?page=1`}
+                        className="ml-2 text-sm text-[#444] hover:underline">
+                        더보기
+                    </Link>
+                </h1>
                 <div className='mt-4 flex flex-col w-full rounded-md p-2 bg-[#1D1D1D] gap-y-1'>
                         {data && data.map(data => (
                             <SportFreeItem

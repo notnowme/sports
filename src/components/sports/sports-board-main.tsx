@@ -1,16 +1,15 @@
 'use client'
 
 import {
-    ChevronLeft,
-    ChevronRight,
     Pencil
 } from 'lucide-react'
 
 import SportFreeItem from "@/components/sports/sports-free-item";
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FootballBoard, UserRole } from '@prisma/client';
 import Pagination from '../pagination';
+import { useEffect, useRef } from 'react';
 
 interface BoardWithAuthor extends FootballBoard{
     author: {
@@ -35,7 +34,22 @@ interface SportBoardPageLayout {
     sports: string;
 }
 const SportsBoardMain = ({data, children, sports, team, count, page}: SportBoardPageLayout) => {
-    const pathname = usePathname().split('/')
+    const pathname = usePathname().split('/');
+    const selectRef = useRef<HTMLSelectElement>(null);
+    const textRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
+
+    const handleSearch = () => {
+        if(selectRef.current && textRef.current) {
+            const query = selectRef.current.value;
+            const keyword = textRef.current.value;
+            if(!keyword || keyword.length <= 1) {
+                alert('두 글자 이상만 검색 가능합니다.');
+                return;
+            }
+            router.push(`/sports/${sports}/${team}/free?sc=${query}&keyword=${keyword}&page=1`)
+        }
+    };
     return (
         <div className="flex flex-col w-full p-2">
             {children}
@@ -74,17 +88,22 @@ const SportsBoardMain = ({data, children, sports, team, count, page}: SportBoard
             </div>
             <div className="mt-4 w-full flex items-center justify-end">
                 <div className="h-[30px]">
-                    <select name="search" id="search"
+                    <select name="search" id="search" ref={selectRef}
                         className="px-1 h-full mr-2 text-sm text-center rounded-md"
                     >
                         <option value="title" className='text-center'>제목</option>
                         <option value="content" className='text-center'>내용</option>
                         <option value="author" className='text-center'>작성자</option>
                     </select>
-                    <input type="text"
+                    <input type="text" ref={textRef}
                         className="w-[250px] h-full text-sm px-2 p-1 rounded-md outline-none mr-2"
                     />
-                    <button className="bg-[#292929] rounded-md h-full px-2 text-sm">검색</button>
+                    <button
+                        className="bg-[#292929] rounded-md h-full px-2 text-sm"
+                        onClick={() => handleSearch()}
+                    >
+                        검색
+                    </button>
                 </div>
             </div>
             <div className="mt-10 w-full p-2 flex items-center justify-center gap-x-3">

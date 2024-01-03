@@ -3,7 +3,6 @@
 import { FileSpreadsheet, MapPinned } from 'lucide-react'
 import { kleague_matches_map } from '@/data/kleague_matches'
 
-import SportsReviewList from '@/components/sports/sports-review'
 import SportsMeetList from '@/components/sports/sports-meet'
 import SportMatchContainer from '../sports-match-container'
 import SportFreeItem from '../sports-free-item'
@@ -34,7 +33,6 @@ const SportsKleagueMain = () => {
                 cache: 'no-store'
             });
             const result = await res.json();
-            console.log(result);
             setData(result);
         }
         getData();

@@ -6,7 +6,7 @@ interface SignOption {
 }
 
 const DEFAULT_SIGN_OPTION: SignOption = {
-    expiresIn: '1h' // 1시간
+    expiresIn: '10s' // 1시간
 };
 
 const DEFAULT_REFRESH_OPTION: SignOption = {

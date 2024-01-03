@@ -23,7 +23,10 @@ const MyPage = () => {
     const router = useRouter()
     const [user, setUser] = useState<UserWithBoards>()
     const fileRef = useRef<HTMLInputElement>(null)
+    const nickRef = useRef<HTMLInputElement>(null);
+    const [nick, setNick] = useState('');
     const [img, setImg] = useState('');
+    const [nickModal, setNickModal] = useState(false);
     const [changeImg, setChangeImg] = useState(false);
 
     const imgReset = () => {
@@ -59,7 +62,44 @@ const MyPage = () => {
         } else {
             console.log('뭔가 오류');
         }
+    };
+    const handleNickModal = () => {
+        setNickModal(prev => !prev);
+        setNick(user?.nick || '');
     }
+    const handleNickChange = async() => {
+        if(!nick || nick.length <= 1) {
+            alert('최소 두 글자 이상을 입력해야 합니다.');
+            return;
+        }
+        if(nick === user?.nick) {
+            alert('변경 전 닉네임은 사용할 수 없습니다.');
+            return;
+        }
+        try {
+            const res = await fetch(`/api/my`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    id: user?.id,
+                    nick,
+                    type: 'nick'
+                })
+            });
+            const result = await res.json();
+            console.log(result);
+            setNickModal(false);
+            router.refresh();
+            router.push('/my');
+            // 세션 정보도 업데이트 해줘야 될 듯!
+            // 그러면 토큰도 재생성해야되나?
+        } catch(err) {
+            console.log(`[NICK_CHANGE_ERROR]`, err);
+            return;
+        }
+    };
     useEffect(() => {
         const getData = async() => {
             try {
@@ -70,6 +110,7 @@ const MyPage = () => {
                 console.log(data);
                 setUser(prev => data);
                 setImg(data.imgUrl);
+                setNick(data.nick);
             } catch(err) {
                 console.log(err);
             }
@@ -78,6 +119,32 @@ const MyPage = () => {
     },[])
     return (
         <div className="flex flex-col w-full items-start">
+            {nickModal && (
+                <div className='absolute flex justify-center items-center top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)]'>
+                    <div className='p-10 rounded-md bg-[#1D1D1D] flex flex-col items-center justify-center'>
+                        <h1 className='text-3xl font-semibold'>닉네임 변경</h1>
+                        <input type='text'
+                            value={nick}
+                            onChange={(e) => setNick(prev => e.target.value)}
+                            className='mt-2 w-[250px] h-[50px] rounded-md p-2 text-base outline-none'
+                        />
+                        <div className='mt-2 w-full flex gap-x-3 justify-center'>
+                            <button
+                                className='bg-[#292929] rounded-md px-7 py-2'
+                                onClick={handleNickModal}
+                            >
+                                취소
+                            </button>
+                            <button
+                                className='bg-[#292929] rounded-md px-7 py-2'
+                                onClick={handleNickChange}
+                            >
+                                변경
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="flex rounded-md p-2 bg-[#1D1D1D]">
                 <div className="relative flex flex-col w-[200px] justify-center items-center">
                     <div className="relative w-[120px] h-[120px] bg-[#292929] rounded-[16px] overflow-hidden">
@@ -99,7 +166,12 @@ const MyPage = () => {
                                 <button className='p-1 text-sm bg-[#292929] rounded-md'>이미지 변경</button>
                         ) : (
                             <>
-                                <button className='p-1 text-sm bg-[#292929] rounded-md'>닉네임 변경</button>
+                                <button
+                                    className='p-1 text-sm bg-[#292929] rounded-md'
+                                    onClick={()=>setNickModal(true)}
+                                >
+                                    닉네임 변경
+                                </button>
                                 <button className='p-1 text-sm bg-[#292929] rounded-md'>비밀번호 변경</button>
                             </>
                         )}
