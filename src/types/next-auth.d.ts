@@ -10,6 +10,7 @@ declare module 'next-auth' {
       provider: string;
       accessToken: string | unknown;
       role: UserRole;
+      imgUrl: string;
     } & DefaultSession['user']
   }
 }

@@ -12,11 +12,13 @@ import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 
 interface Author {
     id: string;
     nick: string;
-    role: UserRole
+    role: UserRole;
+    imageUrl: string;
 }
 interface CommentWithAuthor extends FootballComments {
     author: Author;
@@ -181,8 +183,8 @@ const SportFreeComment = ({ data, author }: SportFreeCommentProps) => {
     return (
         <div className='w-full flex flex-col mb-10'>
             <div className='flex items-start'>
-                <div className='w-[50px] h-[50px] rounded-[10px] bg-[#292929] mr-4'>
-
+                <div className='relative overflow-hidden w-[50px] h-[50px] rounded-[10px] bg-[#292929] mr-4'>
+                    <Image src={data.author.imageUrl ? data.author.imageUrl : '/img/yuumi.webp'} fill alt='userImg' />
                 </div>
                 <div className='flex flex-col' id={data.no.toString()}>
                     <div className='relative flex items-center'>

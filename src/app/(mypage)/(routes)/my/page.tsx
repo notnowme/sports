@@ -17,6 +17,7 @@ import ChangeNick from '@/components/my-change-nick';
 import ChangePw from '@/components/my-change-pw';
 import Link from 'next/link';
 import React from 'react';
+import axios from 'axios';
 
 interface commentsWithFootball extends FootballComments {
     footballBoard: FootballBoard;
@@ -208,6 +209,32 @@ const MyPage = () => {
             }
         }
     };
+
+    const handleImgChange = async() => {
+        const formData = new FormData();
+        if(fileRef.current && fileRef.current.files && fileRef.current.files.length > 0) {
+            const file = fileRef.current.files[0];
+            formData.append('image', file);
+        } else {
+            console.error('file not found');
+            return;
+        }
+        try {
+            const res = await axios.patch('/api/user/s3', formData, {
+                headers: {
+                    'Content-Type':'multipart/form-data'
+                }
+            });
+            if(res.status === 200) {
+                console.log('OK');
+                imgReset();
+                router.refresh();
+            }
+        } catch (err) {
+            console.error('[USER_IMAGE_ERR]', err);
+            return;
+        }
+    }
     useEffect(() => {
         const getData = async () => {
             try {
@@ -277,7 +304,12 @@ const MyPage = () => {
                     </div>
                     <div className='mt-2 flex gap-x-2'>
                         {changeImg ? (
-                            <button className='p-1 text-sm bg-[#292929] rounded-md'>이미지 변경</button>
+                            <button
+                                className='p-1 text-sm bg-[#292929] rounded-md'
+                                onClick={handleImgChange}
+                            >
+                                이미지 변경
+                            </button>
                         ) : (
                             <>
                                 <button

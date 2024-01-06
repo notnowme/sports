@@ -12,7 +12,8 @@ const nextConfig = {
             'files.fcseoul.com',
             'dhcfcshop.com',
             'www.jeju-utd.com',
-            'www.bluewingsshop.com'
+            'www.bluewingsshop.com',
+            'embers-sports.s3.amazonaws.com'
         ]
     }
 }

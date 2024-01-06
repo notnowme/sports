@@ -221,7 +221,7 @@ export const NavigationTop = () => {
                         <div
                             onClick={() => setViewMy(true)}
                             className='relative flex mx-3 h-[44px] w-[44px] rounded-[24px] bg-[#343434] overflow-hidden cursor-pointer'>
-                            <Image fill src={`/img/yuumi.webp`} alt='user' />
+                            <Image fill src={`${session.user?.imgUrl ? session.user?.imgUrl : '/img/yuumi.webp'}`} alt='user' />
                         </div>
                         <MyModalMenu isOpen={viewMy} onClose={setViewMy} />
                     </>

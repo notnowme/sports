@@ -2,17 +2,12 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-    const { searchParams } = new URL(req.url);
-
     try {
 
         const boards = await db.footballBoard.findMany({
-            take: 5,
+            take: 6,
             where: {
-                team: searchParams.get('team') as string || undefined,
-                NOT: {
-                    category: 'circle'
-                }
+                category: 'circle'
             },
             include: {
                 author: {
@@ -40,7 +35,7 @@ export async function GET(req: Request) {
         });
         return NextResponse.json(boards);
     } catch(err) {
-        console.log(`[BOARD_LATEST_GET_ERROR]`, err);
+        console.log(`[BOARD_LATEST_CIRCLE_GET_ERROR]`, err);
         return new NextResponse(JSON.stringify({msg: 'Internal Server Error'}), { status: 500 })
     }
 }

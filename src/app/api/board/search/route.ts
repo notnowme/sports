@@ -43,7 +43,8 @@ export async function GET(req: Request) {
                     select: {
                         id: true,
                         nick: true,
-                        role: true
+                        role: true,
+                        imageUrl: true
                     }
                 },
                 likes: {

@@ -25,6 +25,7 @@ interface BoardWithAuthor extends FootballBoard{
 
 const SportsKleagueMain = () => {
     const [data, setData] = useState<BoardWithAuthor[]>()
+    const [circleData, setCircleData] = useState<BoardWithAuthor[]>();
 
     useEffect(() => {
         const getData = async() => {
@@ -35,7 +36,17 @@ const SportsKleagueMain = () => {
             const result = await res.json();
             setData(result);
         }
+        const getData2 = async() => {
+            const res = await fetch(`/api/board/latest/circle`, {
+                method: 'GET',
+                cache: 'no-store'
+            });
+            const result = await res.json();
+            console.log(result);
+            setCircleData(result);
+        }
         getData();
+        getData2();
     },[])
     return (
         <div className="mt-20 flex flex-col w-full max-w-[1280px]">
@@ -51,12 +62,12 @@ const SportsKleagueMain = () => {
                         <span>같이 보실 분</span>
                     </div>
                     <div className='mt-2 w-full h-[430px] flex flex-col items-center rounded-md bg-[#1D1D1D] p-2 gap-y-4'>
-                        <SportsMeetList />
-                        <SportsMeetList />
-                        <SportsMeetList />
-                        <SportsMeetList />
-                        <SportsMeetList />
-                        <SportsMeetList />
+                        {circleData && circleData.map(data => (
+                            <SportsMeetList
+                                key={data.no}
+                                data={data}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

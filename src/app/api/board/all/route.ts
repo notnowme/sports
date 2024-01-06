@@ -30,7 +30,8 @@ export async function GET(req: Request) {
                         author: {
                             select: {
                                 id: true,
-                                nick: true
+                                nick: true,
+                                imageUrl: true
                             }
                         },
                         comment: {

@@ -36,7 +36,8 @@ export async function GET(req: Request, { params }: GetProps) {
                     select: {
                         id: true,
                         nick: true,
-                        role: true
+                        role: true,
+                        imageUrl: true
                     }
                 },
                 comment: {
@@ -45,7 +46,8 @@ export async function GET(req: Request, { params }: GetProps) {
                             select: {
                                 id: true,
                                 nick: true,
-                                role: true
+                                role: true,
+                                imageUrl: true
                             }
                         },
                         likes: {

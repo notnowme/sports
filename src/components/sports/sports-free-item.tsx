@@ -1,12 +1,14 @@
 import { FootballBoard, UserRole } from "@prisma/client";
 import moment from "moment";
+import Image from "next/image";
 import Link from "next/link";
 
 interface BoardWithAuthor extends FootballBoard {
     author: {
         id: string;
         nick: string;
-        role: UserRole
+        role: UserRole;
+        imageUrl: string;
     }
     likes: {
         id: string
@@ -38,8 +40,8 @@ const SportFreeItem = ({ data, sports, team, page, main }: { data: BoardWithAuth
             </div>
             <div className='flex'>
                 <div className="flex items-center gap-x-1 w-[100px]">
-                    <div className="w-[25px] h-[25px] bg-[#292929] rounded-md mr-1">
-
+                    <div className="relative w-[25px] h-[25px] bg-[#292929] rounded-md mr-1 overflow-hidden">
+                        <Image src={data.author.imageUrl ? data.author.imageUrl : '/img/yuumi.webp'} fill alt='userImg' />
                     </div>
                     <span>{data.author.nick}</span>
                 </div>

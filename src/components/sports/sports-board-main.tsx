@@ -89,7 +89,7 @@ const SportsBoardMain = ({data, children, sports, team, count, page}: SportBoard
                         page={page}
                     />
                 ))}
-                {!data && (
+                {filteredData && filteredData.length === 0 && (
                     <span>작성된 글이 없습니다.</span>
                 )}
             </div>

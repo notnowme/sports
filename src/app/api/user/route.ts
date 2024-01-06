@@ -39,6 +39,7 @@ export async function POST(req: Request) {
                 no: user.no,
                 id: user.id,
                 nick: user.nick,
+                imgUrl: user.imageUrl,
                 provider: user.provider,
                 role: user.role
             };

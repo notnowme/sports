@@ -37,7 +37,8 @@ export async function GET(req: Request) {
                     select: {
                         id: true,
                         nick: true,
-                        role: true
+                        role: true,
+                        imageUrl: true
                     }
                 },
                 likes: {
@@ -83,7 +84,11 @@ export async function PUT(req: Request) {
                 board: type
             }
         });
-
+        await db.allBoards.create({
+            data: {
+                footNo: board.no
+            }
+        });
         return NextResponse.json(board);
     } catch(err) {
         console.log(`[BOARD_PUT_ERROR]`, err);

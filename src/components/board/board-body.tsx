@@ -13,11 +13,13 @@ import moment from 'moment';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import DOMpurify from 'dompurify';
+import Image from 'next/image';
 
 interface Author {
     id: string;
     nick: string;
-    role: UserRole
+    role: UserRole;
+    imageUrl: string;
 }
 interface CommentWithAuthor extends FootballComments {
     author: Author;
@@ -180,8 +182,8 @@ const BoardBodyPage = ({data, isLogin}: BoardBodyPageProps) => {
     return (
         <div className="w-full flex flex-col bg-[#1D1D1D] p-4 mt-5 mb-10">
             <div className="w-full flex items-center mb-10">
-                <div className="w-[60px] h-[60px] rounded-[15px] bg-[#292929] mr-4">
-
+                <div className="relative overflow-hidden w-[60px] h-[60px] rounded-[15px] bg-[#292929] mr-4">
+                    <Image src={data.author.imageUrl ? data.author.imageUrl : '/img/yuumi.webp'} fill alt='userImg' />
                 </div>
                 <div className="relative flex flex-col text-base">
                     <div className='flex items-center'>
