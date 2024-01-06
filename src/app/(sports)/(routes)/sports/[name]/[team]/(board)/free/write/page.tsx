@@ -5,6 +5,7 @@ import Editor from "@/components/editor/editor";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 
 
@@ -14,6 +15,7 @@ const SportFreeWrite = () => {
     const [htmlStr, setHtmlStr] = useState('')
     const titleRef = useRef<HTMLInputElement>(null)
     const categoryRef = useRef<HTMLSelectElement>(null)
+    const imgRef = useRef<HTMLInputElement>(null);
     const pathname = usePathname();
     const { data: session } = useSession();
     const viewContainerRef = useRef<HTMLDivElement>(null)
@@ -30,25 +32,24 @@ const SportFreeWrite = () => {
     },[htmlStr])
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
       
-        if (!event.target.files || event.target.files.length === 0) {
-            return;
-        }
-        const file = event.target.files[0];
         const formData = new FormData();
-        formData.append('image', file);
+
+        if (imgRef.current && imgRef.current.files && imgRef.current.files.length > 0) {
+          const file = imgRef.current.files[0];
+        
+          formData.append('image', file);
+        
+        } else {
+          console.error('file not found');
+        }
     
         try {
-            const res = await fetch('/api/board/s3/upload', {
-                method: 'POST',
-                body: formData,
+            const test = await axios.put('/api/board/s3', formData, {
+                headers: {
+                    'Content-Type':'multipart/form-data'
+                }
             });
-    
-            const result = await res.json();
-            if (res.status === 200) {
-                // 이미지 업로드 성공, 결과 처리 (예: 이미지 URL 저장)
-            } else {
-                console.error('Image upload failed');
-            }
+            console.log(test);
         } catch (error) {
             console.error('Error uploading image:', error);
         }
@@ -58,8 +59,8 @@ const SportFreeWrite = () => {
 
             const category = categoryRef.current.value;
             const title = titleRef.current.value;
-            const team = pathname.split('/')[3];
-            const board = pathname.split('/')[4];
+            const team = pathname?.split('/')[3];
+            const board = pathname?.split('/')[4];
             if(!title) {
                 alert('제목을 입력해 주세요.');
                 titleRef.current.focus();
@@ -85,7 +86,7 @@ const SportFreeWrite = () => {
                 });
                 const result = await res.json();
                 if(res.status === 200) {
-                    router.push(`${pathname.replace('/write',`/${result.no}`)}`);
+                    router.push(`${pathname?.replace('/write',`/${result.no}`)}`);
                 } else {
                     console.log('Internal Server Error');
                     return;
@@ -121,6 +122,7 @@ const SportFreeWrite = () => {
                 />
                 <input type="file"
                          accept="image/*"
+                         ref={imgRef}
                        onChange={handleImageUpload}
                 />
             </div>
