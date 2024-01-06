@@ -10,13 +10,21 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image'
 
 import { User, FootballBoard, FootballComments } from '@prisma/client';
-import { signOut } from 'next-auth/react';
+import { getCsrfToken, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
+import ChangeNick from '@/components/my-change-nick';
+import ChangePw from '@/components/my-change-pw';
+import Link from 'next/link';
+import React from 'react';
+
+interface commentsWithFootball extends FootballComments {
+    footballBoard: FootballBoard;
+}
 
 interface UserWithBoards extends User {
     free: FootballBoard[];
-    comments: FootballComments[];
+    comments: commentsWithFootball[];
 }
 
 const MyPage = () => {
@@ -25,9 +33,16 @@ const MyPage = () => {
     const fileRef = useRef<HTMLInputElement>(null)
     const nickRef = useRef<HTMLInputElement>(null);
     const [nick, setNick] = useState('');
+    const [verifyPw, setVerifyPw] = useState(false)
+    const [password, setPassword] = useState('');
+    const [passwordChk, setPasswordChk] = useState('');
     const [img, setImg] = useState('');
     const [nickModal, setNickModal] = useState(false);
+    const [pwModal, setPwModal] = useState(false);
     const [changeImg, setChangeImg] = useState(false);
+    const [boardData, setBoardData] = useState<any[]>([]);
+    const [commentData, setCommentData] = useState<any[]>([]);
+    const { data: session } = useSession()
 
     const imgReset = () => {
         URL.revokeObjectURL(img);
@@ -35,8 +50,8 @@ const MyPage = () => {
         setChangeImg(false);
     }
 
-    const handleImg = (e: React.ChangeEvent<{files: FileList | null}>) => {
-        if(e.target.files && e.target.files.length > 0) {
+    const handleImg = (e: React.ChangeEvent<{ files: FileList | null }>) => {
+        if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
             URL.revokeObjectURL(img);
 
@@ -45,9 +60,9 @@ const MyPage = () => {
         }
     }
 
-    const handleDelete = async() => {
+    const handleDelete = async () => {
         const check = prompt("'탈퇴합니다.'를 정확히 입력해 주세요.")
-        if(check !== '탈퇴합니다.') return;
+        if (check !== '탈퇴합니다.') return;
         const res = await fetch('/api/user', {
             method: 'DELETE',
             headers: {
@@ -57,8 +72,8 @@ const MyPage = () => {
                 id: user?.id
             })
         });
-        if(res.status === 200) {
-            signOut({callbackUrl: '/'});
+        if (res.status === 200) {
+            signOut({ callbackUrl: '/' });
         } else {
             console.log('뭔가 오류');
         }
@@ -67,12 +82,12 @@ const MyPage = () => {
         setNickModal(prev => !prev);
         setNick(user?.nick || '');
     }
-    const handleNickChange = async() => {
-        if(!nick || nick.length <= 1) {
+    const handleNickChange = async () => {
+        if (!nick || nick.length <= 1) {
             alert('최소 두 글자 이상을 입력해야 합니다.');
             return;
         }
-        if(nick === user?.nick) {
+        if (nick === user?.nick) {
             alert('변경 전 닉네임은 사용할 수 없습니다.');
             return;
         }
@@ -80,7 +95,7 @@ const MyPage = () => {
             const res = await fetch(`/api/my`, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type':'application/json'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     id: user?.id,
@@ -91,59 +106,158 @@ const MyPage = () => {
             const result = await res.json();
             console.log(result);
             setNickModal(false);
+            const userInfo = {
+                no: user?.no,
+                id: user?.id,
+                nick: nick,
+                provider: user?.provider,
+                role: user?.role
+            };
+            const createRes = await fetch('/api/auth', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userInfo
+                })
+            });
+            const createResult = await createRes.json();
+            if (session?.user) {
+                session.user.accessToken = createResult;
+                session.user.nick = nick
+            };
+            await getCsrfToken();
             router.refresh();
-            router.push('/my');
+            window.location.href = '/my';
+            return;
             // 세션 정보도 업데이트 해줘야 될 듯!
             // 그러면 토큰도 재생성해야되나?
-        } catch(err) {
+        } catch (err) {
             console.log(`[NICK_CHANGE_ERROR]`, err);
             return;
         }
     };
+
+    const handlePwModal = () => {
+        setPwModal(prev => !prev);
+        setPassword('');
+        setPasswordChk('');
+        setVerifyPw(false);
+    };
+
+    const handlePwChange = async () => {
+        if (!verifyPw) {
+            if (!password) {
+                alert('비밀번호를 입력하지 않았습니다.');
+                return;
+            }
+            try {
+                const res = await fetch('/api/auth/pw', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: user?.id,
+                        password
+                    })
+                });
+                if (res.status !== 200) {
+                    const result = await res.json();
+                    console.log(result.msg);
+                    return;
+                }
+                setVerifyPw(true);
+                setPassword('');
+            } catch (err) {
+                console.log(`[NICK_CHECK_ERROR]`, err);
+                return;
+            }
+        } else {
+            try {
+                if (!password || password.length <= 7) {
+                    alert('최소 여덟 글자 이상을 입력해야 합니다.');
+                    return;
+                }
+                if (password !== passwordChk) {
+                    alert('비밀번호가 일치하지 않습니다.');
+                    return;
+                }
+                const res = await fetch('/api/auth/pw', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: user?.id,
+                        password
+                    })
+                });
+                const result = await res.json();
+                console.log(result);
+                setVerifyPw(false);
+                setPassword('');
+                setPasswordChk('');
+                setPwModal(false);
+                router.refresh();
+                window.location.href = '/my';
+            } catch (err) {
+                console.log(`[NICK_CHANGE_ERROR]`, err);
+                return;
+            }
+        }
+    };
     useEffect(() => {
-        const getData = async() => {
+        const getData = async () => {
             try {
                 const res = await fetch('/api/my', {
                     method: 'POST'
                 });
                 const data = await res.json();
-                console.log(data);
                 setUser(prev => data);
                 setImg(data.imgUrl);
                 setNick(data.nick);
-            } catch(err) {
+                const res2 = await fetch('/api/board/all', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: session?.user?.id
+                    })
+                });
+                const data2 = await res2.json();
+                console.log(data2);
+                setBoardData(data2.boards);
+                setCommentData(data2.comments);
+            } catch (err) {
                 console.log(err);
             }
         };
         getData();
-    },[])
+        console.log(session?.user);
+    }, []);
     return (
         <div className="flex flex-col w-full items-start">
             {nickModal && (
-                <div className='absolute flex justify-center items-center top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)]'>
-                    <div className='p-10 rounded-md bg-[#1D1D1D] flex flex-col items-center justify-center'>
-                        <h1 className='text-3xl font-semibold'>닉네임 변경</h1>
-                        <input type='text'
-                            value={nick}
-                            onChange={(e) => setNick(prev => e.target.value)}
-                            className='mt-2 w-[250px] h-[50px] rounded-md p-2 text-base outline-none'
-                        />
-                        <div className='mt-2 w-full flex gap-x-3 justify-center'>
-                            <button
-                                className='bg-[#292929] rounded-md px-7 py-2'
-                                onClick={handleNickModal}
-                            >
-                                취소
-                            </button>
-                            <button
-                                className='bg-[#292929] rounded-md px-7 py-2'
-                                onClick={handleNickChange}
-                            >
-                                변경
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <ChangeNick
+                    nick={nick}
+                    setNick={setNick}
+                    handleNickChange={handleNickChange}
+                    handleNickModal={handleNickModal}
+                />
+            )}
+            {pwModal && (
+                <ChangePw
+                    password={password}
+                    setPassword={setPassword}
+                    passwordChk={passwordChk}
+                    setPasswordChk={setPasswordChk}
+                    handlePwModal={handlePwModal}
+                    handlePwChange={handlePwChange}
+                    verifyPw={verifyPw}
+                />
             )}
             <div className="flex rounded-md p-2 bg-[#1D1D1D]">
                 <div className="relative flex flex-col w-[200px] justify-center items-center">
@@ -163,16 +277,21 @@ const MyPage = () => {
                     </div>
                     <div className='mt-2 flex gap-x-2'>
                         {changeImg ? (
-                                <button className='p-1 text-sm bg-[#292929] rounded-md'>이미지 변경</button>
+                            <button className='p-1 text-sm bg-[#292929] rounded-md'>이미지 변경</button>
                         ) : (
                             <>
                                 <button
                                     className='p-1 text-sm bg-[#292929] rounded-md'
-                                    onClick={()=>setNickModal(true)}
+                                    onClick={() => setNickModal(true)}
                                 >
                                     닉네임 변경
                                 </button>
-                                <button className='p-1 text-sm bg-[#292929] rounded-md'>비밀번호 변경</button>
+                                <button
+                                    className='p-1 text-sm bg-[#292929] rounded-md'
+                                    onClick={() => setPwModal(true)}
+                                >
+                                    비밀번호 변경
+                                </button>
                             </>
                         )}
                     </div>
@@ -187,7 +306,7 @@ const MyPage = () => {
                             onClick={() => fileRef.current?.click()}
                         />
                     )}
-                    <input hidden type='file' ref={fileRef}  onChange={handleImg} accept='image/jpeg, image/png, image/jpg, image/webp'/>
+                    <input hidden type='file' ref={fileRef} onChange={handleImg} accept='image/jpeg, image/png, image/jpg, image/webp' />
                 </div>
                 <div className="border-l border-[#292929]" />
                 <div className='flex justify-center'>
@@ -195,14 +314,14 @@ const MyPage = () => {
                         <FileEdit className='w-[70px] h-[70px]' strokeWidth={1} />
                         <span className='text-base'>작성 글 수</span>
                         <span className='mt-2 text-3xl font-semibold'>
-                            {user?.free?.length}
+                            {boardData?.length}
                         </span>
                     </div>
                     <div className='ml-4 flex flex-col justify-center items-center w-[200px] h-full'>
                         <MessageCircle className='w-[70px] h-[70px]' strokeWidth={1} />
                         <span className='text-base'>작성 댓글 수</span>
                         <span className='mt-2 text-3xl font-semibold'>
-                        {user?.comments?.length}
+                            {commentData?.length}
                         </span>
                     </div>
                 </div>
@@ -210,20 +329,32 @@ const MyPage = () => {
             <div className='mt-10 flex gap-x-8'>
                 <div className='flex flex-col px-10 py-6 gap-y-2 rounded-md bg-[#1D1D1D]'>
                     <span className='text-3xl font-semibold mb-2'>나의 최근 작성 글</span>
-                    {user && user.free.map(data => (
-                        <div key={data.no} className='group flex flex-col'>
-                            <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>{data.title}</span>
-                            <span className='text-sm text-[#777]'>{moment(data.createdAt).format('YY. MM. DD')}</span>
-                        </div>
+                    {boardData && boardData.map((el: any, index: number) => (
+                        <React.Fragment key={index}>
+                            {el.footBoard && (
+                                <div key={el.footBoard.no} className='group flex flex-col'>
+                                    <Link href={`/sports/${el.footBoard.sport}/${el.footBoard.team}/${el.footBoard.board}/${el.footBoard.no}?page=1`} className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>
+                                        {el.footBoard.title}
+                                    </Link>
+                                    <span className='text-sm text-[#777]'>{moment(el.footBoard.createdAt).format('YY. MM. DD')}</span>
+                                </div>
+                            )}
+                        </React.Fragment>
                     ))}
                 </div>
                 <div className='flex flex-col px-10 py-6 gap-y-2 rounded-md bg-[#1D1D1D]'>
                     <span className='text-3xl font-semibold mb-2'>나의 최근 작성 댓글</span>
-                    {user && user.comments.map(data => (
-                        <div key={data.no} className='group flex flex-col'>
-                            <span className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>{data.content.length > 10 ? data.content.substring(0,10) : data.content}</span>
+                    {commentData && commentData.map((data, index: number) => (
+                        <React.Fragment key={index}>
+                            {data.footComment && (
+                                <div key={data.no} className='group flex flex-col'>
+                            <Link href={`/sports/kleague/${data.footComment.footballBoard.team}/${data.footComment.board}/${data.footComment.footballBoard.no}?page=1#${data.footCommentNo}`} className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>
+                                {data.footComment.content.length > 10 ? data.footComment.content.substring(0, 10) : data.footComment.content}
+                            </Link>
                             <span className='text-sm text-[#777]'>{moment(data.createdAt).format('YY. MM. DD')}</span>
-                        </div>
+                                </div>
+                            )}
+                        </React.Fragment>
                     ))}
                 </div>
                 <div className='flex flex-col px-10 py-6 rounded-md bg-[#1D1D1D] gap-y-4'>

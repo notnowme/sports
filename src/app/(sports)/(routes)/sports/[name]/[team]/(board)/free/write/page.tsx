@@ -30,6 +30,7 @@ const SportFreeWrite = () => {
             const category = categoryRef.current.value;
             const title = titleRef.current.value;
             const team = pathname.split('/')[3];
+            const board = pathname.split('/')[4];
             if(!title) {
                 alert('제목을 입력해 주세요.');
                 titleRef.current.focus();
@@ -49,7 +50,8 @@ const SportFreeWrite = () => {
                         category,
                         title,
                         content: htmlStr,
-                        team
+                        team,
+                        type: board
                     })
                 });
                 const result = await res.json();

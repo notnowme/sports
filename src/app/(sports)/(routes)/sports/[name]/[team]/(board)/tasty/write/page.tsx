@@ -2,25 +2,72 @@
 
 import { useEffect, useRef, useState } from "react";
 import Editor from "@/components/editor/editor";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const SportFreeWrite = () => {
     const [htmlStr, setHtmlStr] = useState('')
-    const title = useRef<HTMLInputElement>(null)
-    const category = useRef<HTMLSelectElement>(null)
-
+    const titleRef = useRef<HTMLInputElement>(null)
+    const categoryRef = useRef<HTMLSelectElement>(null)
+    const router = useRouter();
+    const pathname = usePathname();
     const viewContainerRef = useRef<HTMLDivElement>(null)
+    const { data: session } = useSession();
 
+    if(!session || !session.user) {
+        return <div>로그인하지 않아서 이용 못 함.</div>
+    }
     useEffect(() => {
         if(viewContainerRef.current) {
             viewContainerRef.current.innerHTML += htmlStr
         }
     },[htmlStr])
-
+    useEffect(() => {
+        if(window) {
+            window.scrollTo({top: 0, behavior: 'instant'})
+        }
+    },[])
     const handleSubmit = async() => {
-        if(category.current && title.current) {
-            console.log(title.current.value)
-            console.log(category.current.value)
-            console.log(htmlStr)
+        if(categoryRef.current && titleRef.current) {
+
+            const category = categoryRef.current.value;
+            const title = titleRef.current.value;
+            const team = pathname.split('/')[3];
+            const board = pathname.split('/')[4];
+            if(!title) {
+                alert('제목을 입력해 주세요.');
+                titleRef.current.focus();
+                return;
+            }
+            if(!htmlStr) {
+                alert('내용을 입력해 주세요.');
+                return;
+            }
+            try {
+                const res = await fetch('/api/board', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        category,
+                        title,
+                        content: htmlStr,
+                        team,
+                        type: board
+                    })
+                });
+                const result = await res.json();
+                if(res.status === 200) {
+                    router.push(`${pathname.replace('/write',`/${result.no}`)}`);
+                } else {
+                    console.log('Internal Server Error');
+                    return;
+                }
+            } catch(err) {
+                console.log(`[WRITE_FETCH_ERROR]`, err);
+                return;
+            }
         }
     }
     return (
@@ -30,16 +77,16 @@ const SportFreeWrite = () => {
             </div>
             <div className="flex items-center bg-[#1D1D1D] rounded-md h-[50px] mb-4">
                 <select name="cat" id="cat"
-                    ref={category}
+                    ref={categoryRef}
                     className="w-[100px] h-full text-center text-lg rounded-md"
                 >
-                    <option value="normal">모임</option>
-                    <option value="review">맛집</option>
+                    <option value="circle">모임</option>
+                    <option value="place">맛집</option>
                 </select>
                 <input type="text"
                     className="outline-none w-full h-full bg-[#1D1D1D] p-2"
                     placeholder="제목을 입력하세요"
-                    ref={title}
+                    ref={titleRef}
                 />
             </div>
             <div className="flex p-2 w-full h-[500px] bg-[#1D1D1D] mb-4">

@@ -26,9 +26,14 @@ model User {
   free     FootballBoard[]
   comments FootballComments[]
 
+  baseballBoard baseBallBoard[]
+  baseballComments baseBallComments[]
+
   freeLike FootballBoard[] @relation("boardLike")
+  baseballLike baseBallBoard[] @relation("boardLike")
 
   footballCommentLikes FootballComments[] @relation("commentLike")
+  baseBallCommentLikes baseBallComments[] @relation("commentLike")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -48,6 +53,9 @@ enum UserRole {
 
 model FootballBoard {
   no       Int     @id @default(autoincrement())
+  sport String @default("kleague") // kovo, kbo, kbl
+  board String @default("free") // free, tasty
+
   category String
   team     String
   title    String
@@ -63,6 +71,8 @@ model FootballBoard {
 
   comment FootballComments[]
 
+  allBoard allBoards?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -70,6 +80,9 @@ model FootballBoard {
 model FootballComments {
   no      Int    @id @default(autoincrement())
   content String
+
+  sport String @default("kleague")
+  board String @default("free")
 
   authorNo Int
   author   User @relation(fields: [authorNo], references: [no], onDelete: Cascade)
@@ -83,9 +96,86 @@ model FootballComments {
   parent   FootballComments[] @relation("parent")
   child    FootballComments?  @relation("parent", fields: [parentNo], references: [no])
 
+  allComment allComments?
+
   isChild  Boolean @default(false)
   isModify Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model baseBallBoard {
+  no       Int     @id @default(autoincrement())
+  sport String @default("kbo") // kovo, kbo, kbl
+  board String @default("free") // free, tasty
+
+  category String
+  team     String
+  title    String
+  content  String
+  imageUrl String?
+
+  isModify Boolean @default(false)
+
+  authorNo Int
+
+  author   User @relation(fields: [authorNo], references: [no], onDelete: Cascade)
+
+  likes User[] @relation("boardLike")
+
+  comment baseBallComments[]
+
+  allBoard allBoards?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model baseBallComments {
+  no      Int    @id @default(autoincrement())
+  content String
+
+  sport String @default("kbo")
+  board String @default("free")
+
+  authorNo Int
+  author   User @relation(fields: [authorNo], references: [no], onDelete: Cascade)
+
+  likes User[] @relation("commentLike")
+
+  baseBallBaordNo Int
+  baseBallBoard   baseBallBoard @relation(fields: [baseBallBaordNo], references: [no], onDelete: Cascade)
+
+  parentNo Int?
+  parent   baseBallComments[] @relation("parent")
+  child    baseBallComments?  @relation("parent", fields: [parentNo], references: [no])
+
+  isChild  Boolean @default(false)
+  isModify Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model allBoards {
+  no Int @id @default(autoincrement())
+
+  footNo Int? @unique
+  footBoard FootballBoard? @relation(fields: [footNo], references: [no], onDelete: Cascade)
+  
+  baseNo Int? @unique
+  baseBoard baseBallBoard? @relation(fields: [baseNo], references: [no], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model allComments {
+  no Int @id @default(autoincrement())
+
+  footCommentNo Int? @unique
+  footComment FootballComments? @relation(fields: [footCommentNo], references: [no], onDelete: Cascade)
+  
+
+  createdAt DateTime @default(now())
 }

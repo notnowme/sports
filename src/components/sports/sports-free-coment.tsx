@@ -184,7 +184,7 @@ const SportFreeComment = ({ data, author }: SportFreeCommentProps) => {
                 <div className='w-[50px] h-[50px] rounded-[10px] bg-[#292929] mr-4'>
 
                 </div>
-                <div className='flex flex-col'>
+                <div className='flex flex-col' id={data.no.toString()}>
                     <div className='relative flex items-center'>
                         <span className='text-base mr-2'>{data.author.nick}</span>
                         <span className='text-sm text-[#777] mr-2'>

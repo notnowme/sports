@@ -6,7 +6,9 @@ interface SportBoardPageLayout {
 
 const SportBoardPageLayout = ({children}: SportBoardPageLayout) => {
     return (
-        <SportsBoardMain children={children}/>
+        <>
+            {children}
+        </>
     );
 }
  

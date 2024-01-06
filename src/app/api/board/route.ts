@@ -8,6 +8,7 @@ interface WriteProps {
     title: string;
     content: string;
     team: string;
+    type: string;
 }
 
 // 모든 게시글 가져오는 메소드.
@@ -16,6 +17,7 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get('page') as string);
     const pageSize = 10;
     const skip = (page - 1) * pageSize || 0;
+    const type = searchParams.get('type') as string;
 
     try {
         const count = await db.footballBoard.count({
@@ -27,7 +29,8 @@ export async function GET(req: Request) {
             skip,
             take: pageSize,
             where: {
-                team: searchParams.get('team') as string || undefined
+                team: searchParams.get('team') as string || undefined,
+                board: type
             },
             include: {
                 author: {
@@ -48,6 +51,9 @@ export async function GET(req: Request) {
                     }
                 }
             },
+            orderBy: {
+                createdAt: 'desc'
+            }
         });
         return NextResponse.json({boards, count});
     } catch(err) {
@@ -61,7 +67,7 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
     try {
         const body: WriteProps = await req.json();
-        const { category, title, content, team } = body;
+        const { category, title, content, team, type } = body;
         const session = await getServerSession(authOptions);
 
         if(!session) {
@@ -73,7 +79,8 @@ export async function PUT(req: Request) {
                 team,
                 title,
                 content,
-                authorNo: session.user?.no as number
+                authorNo: session.user?.no as number,
+                board: type
             }
         });
 

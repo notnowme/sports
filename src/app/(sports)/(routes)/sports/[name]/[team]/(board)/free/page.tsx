@@ -1,14 +1,8 @@
 import SportsBoardMain from '@/components/sports/sports-board-main';
 
-interface IPrams {
-    params: {
-        name: string;
-        team: string;
-    }
-}
 
 async function getData(team: string, page: string) {
-    const res = await fetch(`${[process.env.NEXTAUTH_URL]}/api/board/?team=${team}&page=${page}`, {
+    const res = await fetch(`${[process.env.NEXTAUTH_URL]}/api/board/?team=${team}&page=${page}&type=free`, {
         method: 'GET',
         cache: 'no-store'
     });

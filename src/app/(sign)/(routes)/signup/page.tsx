@@ -22,10 +22,19 @@ const SignUp = () => {
     const [signVaild, setSignVaild] = useState(false)
 
     const [idChk, setIdChk] = useState(false)
+    
+    const [nickChk, setNickChk] = useState(false)
 
     const router = useRouter();
 
 
+    // 아이디 or 비밀번호 확인 정규식
+    // const regExp = /^[a-z0-9_]{4,20}$/;
+
+    // 아이디 확인 정규식
+    // 영어와 숫자, 4글자 이상 20글자 이하
+    const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
+    
     useEffect(() => {
         if (id) {
             setVaild(prev => false)
@@ -36,11 +45,13 @@ const SignUp = () => {
 
     useEffect(() => {
         if (id && password && pwChk && nick) {
-            setSignVaild(prev => false)
+            if(nickChk) {
+                setSignVaild(prev => false)
+            }
         } else {
             setSignVaild(prev => true)
         }
-    }, [id, password, pwChk, nick])
+    }, [id, password, pwChk, nick, nickChk])
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -62,6 +73,14 @@ const SignUp = () => {
         setBirth('');
     }
     const handleIdChk = async() => {
+        if(regExp.test(id)) {
+            alert('특수문자는 사용할 수 없습니다.');
+            return;
+        }
+        if(id.length <= 5) {
+            alert('아이디가 너무 짧습니다.');
+            return;
+        }
         try {
             const res = await fetch('/api/sign', {
                 method: 'POST',
@@ -93,6 +112,10 @@ const SignUp = () => {
         if(!id) return;
         if(!password) {
             alert('비밀번호를 입력해 주세요');
+            return;
+        }
+        if(password.length <= 7) {
+            alert('비밀번호가 너무 짧습니다.');
             return;
         }
         if(!pwChk) {
@@ -136,6 +159,8 @@ const SignUp = () => {
             <SignUpID vaild={vaild} id={id} onChange={onChange} loginChk={idChk} handleIdChk={handleIdChk} />
             <SignUpPwNick
                 loginChk={idChk}
+                nickChk={nickChk}
+                setNickChk={setNickChk}
                 id={id}
                 password={password}
                 pwChk={pwChk}

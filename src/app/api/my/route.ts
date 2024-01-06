@@ -30,6 +30,13 @@ export async function POST() {
                     take: 6,
                     orderBy: {
                         createdAt: 'asc'
+                    },
+                    include: {
+                        footballBoard: {
+                            select: {
+                                team: true,
+                            }
+                        }
                     }
                 }
             }

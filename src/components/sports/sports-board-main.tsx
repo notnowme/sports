@@ -9,7 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FootballBoard, UserRole } from '@prisma/client';
 import Pagination from '../pagination';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface BoardWithAuthor extends FootballBoard{
     author: {
@@ -38,7 +38,18 @@ const SportsBoardMain = ({data, children, sports, team, count, page}: SportBoard
     const selectRef = useRef<HTMLSelectElement>(null);
     const textRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+    const [categories, setCategories] = useState('all');
+    const [filteredData, setFilterData] = useState<BoardWithAuthor[]>(data);
 
+    useEffect(() => {
+        let filtered: BoardWithAuthor[] = [];
+        if(data && categories === 'all') {
+            filtered = [...data];
+        } else {
+            filtered = data?.filter(el => el.category === categories);
+        }
+        setFilterData(prev => filtered);
+    },[categories])
     const handleSearch = () => {
         if(selectRef.current && textRef.current) {
             const query = selectRef.current.value;
@@ -50,25 +61,26 @@ const SportsBoardMain = ({data, children, sports, team, count, page}: SportBoard
             router.push(`/sports/${sports}/${team}/free?sc=${query}&keyword=${keyword}&page=1`)
         }
     };
+
     return (
         <div className="flex flex-col w-full p-2">
             {children}
             <div className="flex items-center gap-x-6 text-base mb-6">
-                <div>
+                <div onClick={() => setCategories('all')}>
                     <span className="text-[white] cursor-pointer">전체</span>
-                    <div className="border-t-[2px] border-[#00A495]" />
+                    <div className={`border-t-[2px] ${categories === 'all' ? 'border-[#00A495]' : 'border-[#777]'}`} />
                 </div>
-                <div>
+                <div onClick={() => setCategories('normal')}>
                     <span className="text-[#eee] cursor-pointer">잡담</span>
-                    <div className="border-t-[2px] border-[#777]" />
+                    <div className={`border-t-[2px] ${categories === 'normal' ? 'border-[#00A495]' : 'border-[#777]'}`} />
                 </div>
-                <div>
+                <div onClick={() => setCategories('review')}>
                     <span className="text-[#eee] cursor-pointer">후기</span>
-                    <div className="border-t-[2px] border-[#777]" />
+                    <div className={`border-t-[2px] ${categories === 'review' ? 'border-[#00A495]' : 'border-[#777]'}`} />
                 </div>
             </div>
             <div className="flex flex-col w-full p-2 bg-[#1D1D1D] rounded-md">
-                {data.map(data => (
+                {filteredData?.length > 0 && filteredData.map(data => (
                     <SportFreeItem
                         key={data.no}
                         data={data}
@@ -77,6 +89,9 @@ const SportsBoardMain = ({data, children, sports, team, count, page}: SportBoard
                         page={page}
                     />
                 ))}
+                {!data && (
+                    <span>작성된 글이 없습니다.</span>
+                )}
             </div>
             <div className='mt-4 flex items-center justify-end'>
                 <Link

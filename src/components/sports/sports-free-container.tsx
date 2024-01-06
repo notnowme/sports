@@ -36,7 +36,8 @@ const SportFreeContainer = ({boardTitle, team, sports, type}: SportFreeContainer
                 cache: 'no-store'
             });
             const result = await res.json();
-            setData(result);
+            const filtered = result.filter((el: any) => el.board === type);
+            setData(filtered);
         }
         getData();
     },[])
@@ -59,6 +60,9 @@ const SportFreeContainer = ({boardTitle, team, sports, type}: SportFreeContainer
                                 page={1}
                             />
                         ))}
+                        {data?.length === 0 && (
+                            <span>작성된 글이 없습니다.</span>
+                        )}
                 </div>
             </div>
         </div>
