@@ -6,6 +6,10 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+
+
+
+
 const SportFreeWrite = () => {
     const [htmlStr, setHtmlStr] = useState('')
     const titleRef = useRef<HTMLInputElement>(null)
@@ -24,6 +28,31 @@ const SportFreeWrite = () => {
             viewContainerRef.current.innerHTML += htmlStr
         }
     },[htmlStr])
+    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+      
+        if (!event.target.files || event.target.files.length === 0) {
+            return;
+        }
+        const file = event.target.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+    
+        try {
+            const res = await fetch('/api/board/s3/upload', {
+                method: 'POST',
+                body: formData,
+            });
+    
+            const result = await res.json();
+            if (res.status === 200) {
+                // 이미지 업로드 성공, 결과 처리 (예: 이미지 URL 저장)
+            } else {
+                console.error('Image upload failed');
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+        }
+    };
     const handleSubmit = async() => {
         if(categoryRef.current && titleRef.current) {
 
@@ -89,6 +118,10 @@ const SportFreeWrite = () => {
                     className="outline-none w-full h-full bg-[#1D1D1D] p-2"
                     placeholder="제목을 입력하세요"
                     ref={titleRef}
+                />
+                <input type="file"
+                         accept="image/*"
+                       onChange={handleImageUpload}
                 />
             </div>
             <div className="flex p-2 w-full h-[500px] bg-[#1D1D1D] mb-4">
