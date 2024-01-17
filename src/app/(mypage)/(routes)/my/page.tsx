@@ -1,23 +1,28 @@
 'use client';
 
-import {
-    Camera,
-    FileEdit,
-    MessageCircle,
-    X
-} from 'lucide-react'
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image'
 
-import { User, FootballBoard, FootballComments } from '@prisma/client';
-import { getCsrfToken, signOut, useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import moment from 'moment';
-import ChangeNick from '@/components/my-change-nick';
-import ChangePw from '@/components/my-change-pw';
-import Link from 'next/link';
 import React from 'react';
 import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+
+
+import Image from 'next/image'
+
+import { useRouter } from 'next/navigation';
+
+import { getCsrfToken, signOut, useSession } from 'next-auth/react';
+
+import { User, FootballBoard, FootballComments, allBoards, allComments } from '@prisma/client';
+
+import ChangeNick from '@/components/my-change-nick';
+import ChangePw from '@/components/my-change-pw';
+
+import {
+    Camera,
+    X
+} from 'lucide-react'
+import MyCountWrites from '@/components/my/my-count-writes';
+import MyRecentWrites from '@/components/my/my-recent-writes';
 
 interface commentsWithFootball extends FootballComments {
     footballBoard: FootballBoard;
@@ -29,12 +34,10 @@ interface UserWithBoards extends User {
 }
 
 const MyPage = () => {
-    const router = useRouter()
-    const [user, setUser] = useState<UserWithBoards>()
-    const fileRef = useRef<HTMLInputElement>(null)
-    const nickRef = useRef<HTMLInputElement>(null);
+    const [user, setUser] = useState<UserWithBoards>();
     const [nick, setNick] = useState('');
-    const [verifyPw, setVerifyPw] = useState(false)
+    const fileRef = useRef<HTMLInputElement>(null);
+    const [verifyPw, setVerifyPw] = useState(false);
     const [password, setPassword] = useState('');
     const [passwordChk, setPasswordChk] = useState('');
     const [img, setImg] = useState('');
@@ -43,46 +46,53 @@ const MyPage = () => {
     const [changeImg, setChangeImg] = useState(false);
     const [boardData, setBoardData] = useState<any[]>([]);
     const [commentData, setCommentData] = useState<any[]>([]);
-    const { data: session } = useSession()
+    
+    const { data: session } = useSession();
+    const router = useRouter();
 
+    // 이미지 미리보기 없애기.
     const imgReset = () => {
         URL.revokeObjectURL(img);
-        setImg(prev => '');
+        setImg('');
         setChangeImg(false);
     }
 
+    // 이미지 미리보기 설정.
     const handleImg = (e: React.ChangeEvent<{ files: FileList | null }>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
             URL.revokeObjectURL(img);
 
-            setImg(prev => URL.createObjectURL(file));
+            setImg(URL.createObjectURL(file));
             setChangeImg(true);
         }
     }
-
+    
+    // 회원 탈퇴.
     const handleDelete = async () => {
-        const check = prompt("'탈퇴합니다.'를 정확히 입력해 주세요.")
+        // 확인 여부.
+        const check = prompt("'탈퇴합니다.'를 정확히 입력해 주세요.");
         if (check !== '탈퇴합니다.') return;
-        const res = await fetch('/api/user', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                id: user?.id
-            })
-        });
-        if (res.status === 200) {
-            signOut({ callbackUrl: '/' });
-        } else {
-            console.log('뭔가 오류');
+
+        try {
+            const res = await fetch('/api/user', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: user?.id
+                })
+            });
+            if (res.status === 200) {
+                signOut({ callbackUrl: '/' });
+            } else {
+                console.log('문제가 발생했습니다.');
+            }
+        } catch(err) {
+            console.error(`[MYPAGE_DELETE]`, err);
         }
     };
-    const handleNickModal = () => {
-        setNickModal(prev => !prev);
-        setNick(user?.nick || '');
-    }
     const handleNickChange = async () => {
         if (!nick || nick.length <= 1) {
             alert('최소 두 글자 이상을 입력해야 합니다.');
@@ -140,13 +150,6 @@ const MyPage = () => {
         }
     };
 
-    const handlePwModal = () => {
-        setPwModal(prev => !prev);
-        setPassword('');
-        setPasswordChk('');
-        setVerifyPw(false);
-    };
-
     const handlePwChange = async () => {
         if (!verifyPw) {
             if (!password) {
@@ -154,6 +157,7 @@ const MyPage = () => {
                 return;
             }
             try {
+                // 비밀번호 변경 전 현재 비밀번호 확인.
                 const res = await fetch('/api/auth/pw', {
                     method: 'POST',
                     headers: {
@@ -196,7 +200,6 @@ const MyPage = () => {
                     })
                 });
                 const result = await res.json();
-                console.log(result);
                 setVerifyPw(false);
                 setPassword('');
                 setPasswordChk('');
@@ -234,7 +237,20 @@ const MyPage = () => {
             console.error('[USER_IMAGE_ERR]', err);
             return;
         }
-    }
+    };
+
+    const handleNickModal = () => {
+        setNickModal(prev => !prev);
+        setNick(user?.nick || '');
+    };
+
+    const handlePwModal = () => {
+        setPwModal(prev => !prev);
+        setPassword('');
+        setPasswordChk('');
+        setVerifyPw(false);
+    };
+
     useEffect(() => {
         const getData = async () => {
             try {
@@ -242,9 +258,11 @@ const MyPage = () => {
                     method: 'POST'
                 });
                 const data = await res.json();
-                setUser(prev => data);
+                setUser(data);
                 setImg(data.imgUrl);
                 setNick(data.nick);
+
+                // 최신 글 정보.
                 const res2 = await fetch('/api/board/all', {
                     method: 'POST',
                     headers: {
@@ -255,15 +273,13 @@ const MyPage = () => {
                     })
                 });
                 const data2 = await res2.json();
-                console.log(data2);
                 setBoardData(data2.boards);
                 setCommentData(data2.comments);
             } catch (err) {
-                console.log(err);
+                console.error(`[BOARDALL_ERROR]`,err);
             }
         };
         getData();
-        console.log(session?.user);
     }, []);
     return (
         <div className="flex flex-col w-full items-start">
@@ -342,53 +358,29 @@ const MyPage = () => {
                 </div>
                 <div className="border-l border-[#292929]" />
                 <div className='flex justify-center'>
-                    <div className='ml-4 flex flex-col justify-center items-center w-[200px] h-full'>
-                        <FileEdit className='w-[70px] h-[70px]' strokeWidth={1} />
-                        <span className='text-base'>작성 글 수</span>
-                        <span className='mt-2 text-3xl font-semibold'>
-                            {boardData?.length}
-                        </span>
-                    </div>
-                    <div className='ml-4 flex flex-col justify-center items-center w-[200px] h-full'>
-                        <MessageCircle className='w-[70px] h-[70px]' strokeWidth={1} />
-                        <span className='text-base'>작성 댓글 수</span>
-                        <span className='mt-2 text-3xl font-semibold'>
-                            {commentData?.length}
-                        </span>
-                    </div>
+                    <MyCountWrites
+                        type='writes'
+                        title='작성 글 수'
+                        count={boardData?.length}
+                    />
+                    <MyCountWrites
+                        type='comments'
+                        title='작성 댓글 수'
+                        count={commentData?.length}
+                    />
                 </div>
             </div>
             <div className='mt-10 flex gap-x-8'>
-                <div className='flex flex-col px-10 py-6 gap-y-2 rounded-md bg-[#1D1D1D]'>
-                    <span className='text-3xl font-semibold mb-2'>나의 최근 작성 글</span>
-                    {boardData && boardData.map((el: any, index: number) => (
-                        <React.Fragment key={index}>
-                            {el.footBoard && (
-                                <div key={el.footBoard.no} className='group flex flex-col'>
-                                    <Link href={`/sports/${el.footBoard.sport}/${el.footBoard.team}/${el.footBoard.board}/${el.footBoard.no}?page=1`} className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>
-                                        {el.footBoard.title}
-                                    </Link>
-                                    <span className='text-sm text-[#777]'>{moment(el.footBoard.createdAt).format('YY. MM. DD')}</span>
-                                </div>
-                            )}
-                        </React.Fragment>
-                    ))}
-                </div>
-                <div className='flex flex-col px-10 py-6 gap-y-2 rounded-md bg-[#1D1D1D]'>
-                    <span className='text-3xl font-semibold mb-2'>나의 최근 작성 댓글</span>
-                    {commentData && commentData.map((data, index: number) => (
-                        <React.Fragment key={index}>
-                            {data.footComment && (
-                                <div key={data.no} className='group flex flex-col'>
-                            <Link href={`/sports/kleague/${data.footComment.footballBoard.team}/${data.footComment.board}/${data.footComment.footballBoard.no}?page=1#${data.footCommentNo}`} className='text-xl group-hover:text-[#00A495] hover:cursor-pointer'>
-                                {data.footComment.content.length > 10 ? data.footComment.content.substring(0, 10) : data.footComment.content}
-                            </Link>
-                            <span className='text-sm text-[#777]'>{moment(data.createdAt).format('YY. MM. DD')}</span>
-                                </div>
-                            )}
-                        </React.Fragment>
-                    ))}
-                </div>
+                <MyRecentWrites
+                    title='나의 최근 작성 글'
+                    data={boardData as allBoards[]}
+                    type='writes'
+                />
+                <MyRecentWrites
+                    title='나의 최근 작성 댓글'
+                    data={commentData as allComments[]}
+                    type='comments'
+                />
                 <div className='flex flex-col px-10 py-6 rounded-md bg-[#1D1D1D] gap-y-4'>
                     <span className='text-3xl font-semibold mb-2'>최근 접속 기록</span>
                     <div className='flex items-center gap-x-2'>

@@ -157,7 +157,8 @@ export async function POST(req: Request) {
                         footballBoard: {
                             select: {
                                 team: true,
-                                no: true
+                                no: true,
+                                sport: true
                             }
                         }
                     },

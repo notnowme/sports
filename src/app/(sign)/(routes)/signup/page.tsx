@@ -37,19 +37,19 @@ const SignUp = () => {
     
     useEffect(() => {
         if (id) {
-            setVaild(prev => false)
+            setVaild(false)
         } else {
-            setVaild(prev => true)
+            setVaild(true)
         }
     }, [id])
 
     useEffect(() => {
         if (id && password && pwChk && nick) {
             if(nickChk) {
-                setSignVaild(prev => false)
+                setSignVaild(false)
             }
         } else {
-            setSignVaild(prev => true)
+            setSignVaild(true)
         }
     }, [id, password, pwChk, nick, nickChk])
 
@@ -61,16 +61,6 @@ const SignUp = () => {
             [name]: value
         }
         setInputs(updateInputs)
-    }
-    const onReset = () => {
-        const updateInputs = {
-            id: '',
-            password: '',
-            pwChk: '',
-            nick: ''
-        }
-        setInputs(prev => updateInputs)
-        setBirth('');
     }
     const handleIdChk = async() => {
         if(regExp.test(id)) {

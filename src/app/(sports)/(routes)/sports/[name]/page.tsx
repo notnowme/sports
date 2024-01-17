@@ -9,22 +9,14 @@ interface SportPageProps {
     }
 }
 
-
 const SportPage = ({params}: SportPageProps) => {
-    if(params.name === 'kbl') {
-        return <SportsKBLMain />
-    }
-    if(params.name === 'kleague') {
-        return <SportsKleagueMain />
-    }
-    if(params.name === 'kbo') {
-        return <SportsKBOMain />
-    }
-    if(params.name === 'kovo') {
-        return <SportsKOVOMain />
-    }
     return (
-        <></>
+        <>
+            {params.name === 'kbl' && <SportsKBLMain />}
+            {params.name === 'kleague' && <SportsKleagueMain />}
+            {params.name === 'kbo' && <SportsKBOMain />}
+            {params.name === 'kovo' && <SportsKOVOMain />}
+        </>
     );
 }
  

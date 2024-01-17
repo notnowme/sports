@@ -1,14 +1,15 @@
+import './globals.css'
+
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
 
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { NavigationTop } from '@/components/navigation/navigation-top'
-import { ChatButton } from '@/components/chat/chat-button'
 import RecoilProvider from '@/components/providers/recoil-provider'
 import ChatContainer from '@/components/chat/chat-container'
 import NextSessionProvider from '@/components/providers/session-provider'
 
+import { ChatButton } from '@/components/chat/chat-button'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
