@@ -8,6 +8,7 @@ import { NavigationTop } from '@/components/navigation/navigation-top'
 import RecoilProvider from '@/components/providers/recoil-provider'
 import ChatContainer from '@/components/chat/chat-container'
 import NextSessionProvider from '@/components/providers/session-provider'
+import Script from 'next/script'
 
 import { ChatButton } from '@/components/chat/chat-button'
 const inter = Inter({ subsets: ['latin'] })
@@ -41,6 +42,10 @@ export default function RootLayout({
           </NextSessionProvider>
         </RecoilProvider>
       </body>
+      <Script
+          type="text/javascript"
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&autoload=false&libraries=services`}
+        />
     </html>
   )
 }

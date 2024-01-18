@@ -32,6 +32,8 @@
     "next-themes": "^0.2.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-kakao-maps": "^0.0.13",
+    "react-kakao-maps-sdk": "^1.1.26",
     "react-quill": "^2.0.0",
     "recoil": "^0.7.7",
     "swiper": "^11.0.5"
@@ -47,6 +49,7 @@
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
+    "kakao.maps.d.ts": "^0.1.39",
     "postcss": "^8",
     "prisma": "^5.7.1",
     "tailwindcss": "^3.3.0",
