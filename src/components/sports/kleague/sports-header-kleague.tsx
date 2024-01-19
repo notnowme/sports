@@ -35,11 +35,11 @@ export const SportsHeaderKleague = () => {
                         onClick={() => setCurrent(prev => 'kleague1')}
                         className={`cursor-pointer ${current === 'kleague1' ? "text-[#eee]" : "text-[#777]"}`}>K-league 1
                     </span>
-                    <span>|</span>
+                    {/* <span>|</span>
                     <span
                         onClick={() => setCurrent(prev => 'kleague2')}
                         className={`cursor-pointer ${current === 'kleague2' ? "text-[#eee]" : "text-[#777]"}`}>K-league 2
-                    </span>
+                    </span> */}
                 </div>
             </div>
             <div className='ml-10 flex gap-4'>

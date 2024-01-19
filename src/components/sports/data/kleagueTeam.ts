@@ -44,14 +44,14 @@ export const kleague1 = [
         imgUrl: '/img/kleague/emblem_K29.png'
     },
     {
-        name: 'k1_suwonss',
-        imgUrl: '/img/kleague/emblem_K02.png'
+        name: 'k1_gimcheon',
+        imgUrl: '/img/kleague/emblem_K35.png'
     },
 ]
 export const kleague2 = [
     {
-        name: 'k2_gimcheon',
-        imgUrl: '/img/kleague/emblem_K35.png'
+        name: 'k2_suwonss',
+        imgUrl: '/img/kleague/emblem_K02.png'
     },
     {
         name: 'k2_busan',

@@ -21,13 +21,13 @@ const teamObj: {[key: string]: string[]} = {
     k1_jeju: ['제주', ''],
     k1_gangwon: ['강원', ''],
     k1_suwonfc: ['수원FC', ''],
-    k1_suwonss: ['수원삼성',''],
+    k1_gimcheon: ['김천상무',''],
 }
 
 const teamArr = [
     'k1_ulsan', 'k1_pohang', 'k1_gwangju', 'k1_jeonbuk',
     'k1_incheon', 'k1_daegu', 'k1_seoul', 'k1_daejeon',
-    'k1_jeju', 'k1_gangwon', 'k1_suwonfc', 'k1_suwonss'
+    'k1_jeju', 'k1_gangwon', 'k1_suwonfc', 'k1_gimcheon'
 ]
 
 const SportsKleagueTeamMainPage = ({teamName}: TeamPageProps) => {

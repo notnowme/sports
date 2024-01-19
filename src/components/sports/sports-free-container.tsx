@@ -16,7 +16,8 @@ interface BoardWithAuthor extends FootballBoard{
     author: {
         id: string;
         nick: string;
-        role: UserRole
+        role: UserRole;
+        imageUrl: string;
     }
     likes: {
         id: string
