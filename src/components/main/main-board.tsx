@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
-import MainBoardItem from "./main-board-item";
-import SportFreeItem from "../sports/sports-free-item";
-
+import SportFreeItem from "../sports/sports-free-item";;
 const MainBoard = () => {
     const [cat, setCat] = useState('normal');
     const [data, setData] = useState([]);
@@ -19,8 +17,6 @@ const MainBoard = () => {
         }
         getData();
     },[cat])
-
-    const arr = new Array(6).fill(0)
     return (
         <div className="flex flex-col items-center w-full max-w-[600px] h-[450px] p-[10px] bg-[#1D1D1D] rounded-md">
             <div className="flex w-full justify-around">
