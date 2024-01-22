@@ -1,55 +1,49 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react';
+
+import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+import SportFreeItem from "@/components/sports/sports-free-item";
+import Pagination from '../pagination';
+
+import { FootballBoard } from '@prisma/client';
+import { BoardWithAuthor } from '@/types/type';
+
 import {
     Pencil
 } from 'lucide-react'
 
-import SportFreeItem from "@/components/sports/sports-free-item";
-import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { FootballBoard, UserRole } from '@prisma/client';
-import Pagination from '../pagination';
-import { useEffect, useRef, useState } from 'react';
-
-interface BoardWithAuthor extends FootballBoard{
-    author: {
-        id: string;
-        nick: string;
-        role: UserRole
-    }
-    likes: {
-        id: string
-    }[]
-    comment: {
-        authorNo: number
-    }[]
-}
+interface BoardType extends FootballBoard, BoardWithAuthor {};
 
 interface SportBoardPageLayout {
-    data: BoardWithAuthor[];
+    data: BoardType[];
     count: number;
     page: number;
     team: string;
     children?: React.ReactNode;
     sports: string;
 }
+
 const SportsBoardMain = ({data, children, sports, team, count, page}: SportBoardPageLayout) => {
     const pathname = usePathname().split('/');
     const selectRef = useRef<HTMLSelectElement>(null);
     const textRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
     const [categories, setCategories] = useState('all');
-    const [filteredData, setFilterData] = useState<BoardWithAuthor[]>(data);
+    const [filteredData, setFilterData] = useState<BoardType[]>(data);
 
     useEffect(() => {
-        let filtered: BoardWithAuthor[] = [];
+        let filtered: BoardType[] = [];
         if(data && categories === 'all') {
             filtered = [...data];
         } else {
             filtered = data?.filter(el => el.category === categories);
         }
-        setFilterData(prev => filtered);
-    },[categories])
+        setFilterData(filtered);
+    },[categories]);
+    
     const handleSearch = () => {
         if(selectRef.current && textRef.current) {
             const query = selectRef.current.value;

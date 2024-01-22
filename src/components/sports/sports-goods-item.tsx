@@ -1,4 +1,5 @@
 import Image from 'next/image'
+
 interface SportsGoodsItemProps {
     imgUrl: string
     goodsName: string

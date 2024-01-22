@@ -15,12 +15,10 @@ import { useSession } from 'next-auth/react';
 import DOMpurify from 'dompurify';
 import Image from 'next/image';
 
-interface Author {
-    id: string;
-    nick: string;
-    role: UserRole;
-    imageUrl: string;
-}
+
+import { Author } from '@/types/type';
+
+
 interface CommentWithAuthor extends FootballComments {
     author: Author;
     likes: Author[];

@@ -1,4 +1,4 @@
-import { MatchData } from '@/components/sports/types'
+import { MatchData } from '@/types/type'
 
 export const kovo_man_matches: MatchData[] = [
     {

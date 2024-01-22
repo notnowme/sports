@@ -1,5 +1,3 @@
-import { Menu } from 'lucide-react'
-
 import { SportsHeaderKBL } from "@/components/sports/kbl/sports-header-kbl";
 import { SportsHeaderKleague } from "@/components/sports/kleague/sports-header-kleague";
 import { SportsHeaderKBO } from '@/components/sports/kbo/sports-header-kbo';

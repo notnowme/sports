@@ -1,38 +1,33 @@
 'use client'
 
-import { FootballComments, UserRole } from '@prisma/client';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+
+import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
+
+import moment from 'moment';
+
+import { CommentWithAuthor } from '@/types/type';
+import { FootballComments } from '@prisma/client';
+
 import {
     Heart,
     MoreHorizontal
 } from 'lucide-react'
 
+interface CommentType extends CommentWithAuthor, FootballComments {};
 
-import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 
-import moment from 'moment';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import Image from 'next/image';
-
-interface Author {
-    id: string;
-    nick: string;
-    role: UserRole;
-    imageUrl: string;
-}
-interface CommentWithAuthor extends FootballComments {
-    author: Author;
-    likes: Author[];
-}
 interface SportFreeCommentProps {
-    data: CommentWithAuthor;
+    data: CommentType;
     author: string | undefined
 }
 
 const ContentMenu = (
     { isOpen, onClose, data, modify, setModify, setText }:
         {
-            data: CommentWithAuthor,
+            data: CommentType,
             isOpen: boolean,
             onClose: Dispatch<SetStateAction<boolean>>,
             modify: boolean,

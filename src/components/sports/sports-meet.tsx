@@ -1,22 +1,14 @@
-import { FootballBoard, UserRole } from "@prisma/client";
 import moment from "moment";
+
+import { FootballBoard } from "@prisma/client";
+import { BoardWithAuthor } from "@/types/type";
+
 import Link from "next/link";
 
-interface BoardWithAuthor extends FootballBoard{
-    author: {
-        id: string;
-        nick: string;
-        role: UserRole
-    }
-    likes: {
-        id: string
-    }[]
-    comment: {
-        authorNo: number
-    }[]
-}
+interface BoardType extends FootballBoard, BoardWithAuthor {}
+
 interface SportsMeetListProps {
-    data: BoardWithAuthor
+    data: BoardType
 }
 
 const SportsMeetList = ({data}: SportsMeetListProps) => {

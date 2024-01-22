@@ -5,10 +5,8 @@ import { kleage_goods_map } from '@/data/kleague_goods'
 import SportMatchContainer from '@/components/sports/sports-match-container'
 import SportFreeContainer from '@/components/sports/sports-free-container'
 import SportsGoodsContainer from '@/components/sports/sports-goods-container'
+import { TeamPageProps } from '@/types/type'
 
-interface TeamPageProps {
-    teamName: string
-}
 const teamObj: {[key: string]: string[]} = {
     k1_ulsan: ['울산', ''],
     k1_pohang: ['포항', ''],

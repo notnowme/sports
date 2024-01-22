@@ -1,9 +1,13 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import SportFreeItem from "./sports-free-item";
-import { FootballBoard, UserRole } from "@prisma/client";
 import Link from "next/link";
+
+import { useEffect, useState } from "react";
+
+import SportFreeItem from "./sports-free-item";
+
+import { BoardWithAuthor } from "@/types/type";
+import { FootballBoard } from "@prisma/client";
 
 interface SportFreeContainerProps {
     boardTitle: string;
@@ -12,23 +16,10 @@ interface SportFreeContainerProps {
     type: 'free' | 'tasty';
 }
 
-interface BoardWithAuthor extends FootballBoard{
-    author: {
-        id: string;
-        nick: string;
-        role: UserRole;
-        imageUrl: string;
-    }
-    likes: {
-        id: string
-    }[]
-    comment: {
-        authorNo: number
-    }[]
-}
+interface BoardType extends FootballBoard, BoardWithAuthor {}
 
 const SportFreeContainer = ({boardTitle, team, sports, type}: SportFreeContainerProps) => {
-    const [data, setData] = useState<BoardWithAuthor[]>()
+    const [data, setData] = useState<BoardType[]>()
 
     useEffect(() => {
         const getData = async() => {

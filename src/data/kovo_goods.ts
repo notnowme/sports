@@ -1,4 +1,4 @@
-import { GoodsData } from "@/components/sports/types"
+import { GoodsData } from '@/types/type'
 
 const kovo_man_goods = [
     {

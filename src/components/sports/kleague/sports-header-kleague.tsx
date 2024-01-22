@@ -6,10 +6,8 @@ import { kleague1, kleague2 } from '@/components/sports/data/kleagueTeam'
 import { useSelectedLayoutSegments } from "next/navigation";
 import Link from 'next/link';
 
-interface Emblem {
-    name: string
-    imgUrl: string
-}
+import { Emblem } from '@/types/type';
+
 
 export const SportsHeaderKleague = () => {
     const [current, setCurrent] = useState('kleague1')

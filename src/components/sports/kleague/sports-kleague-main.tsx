@@ -7,26 +7,17 @@ import SportsMeetList from '@/components/sports/sports-meet'
 import SportMatchContainer from '../sports-match-container'
 import SportFreeItem from '../sports-free-item'
 import { useEffect, useState } from 'react'
-import { FootballBoard, UserRole } from '@prisma/client'
 
-interface BoardWithAuthor extends FootballBoard{
-    author: {
-        id: string;
-        nick: string;
-        role: UserRole;
-        imageUrl: string;
-    }
-    likes: {
-        id: string
-    }[]
-    comment: {
-        authorNo: number
-    }[]
-}
+
+import { FootballBoard } from '@prisma/client'
+import { BoardWithAuthor } from '@/types/type'
+
+interface BoardType extends FootballBoard, BoardWithAuthor {}
+
 
 const SportsKleagueMain = () => {
-    const [data, setData] = useState<BoardWithAuthor[]>()
-    const [circleData, setCircleData] = useState<BoardWithAuthor[]>();
+    const [data, setData] = useState<BoardType[]>()
+    const [circleData, setCircleData] = useState<BoardType[]>();
 
     useEffect(() => {
         const getData = async() => {

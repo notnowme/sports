@@ -1,9 +1,12 @@
 'use client'
 
-import { CalendarDays, ChevronRight, ChevronLeft, FileSpreadsheet, MapPinned } from 'lucide-react'
 import { useState } from 'react'
+
 import SportsMatchResult from './sports-match'
-import { MatchData } from '@/components/sports/types'
+
+import { MatchData } from '@/types/type'
+
+import { CalendarDays, ChevronRight, ChevronLeft } from 'lucide-react'
 
 interface SportsMatchContainerProps {
     dataArr: MatchData[]

@@ -1,7 +1,10 @@
-import { Gift, ChevronRight, ChevronLeft } from 'lucide-react'
 import { useState } from 'react'
+
 import SportsGoodsItem from './sports-goods-item'
-import { GoodsData } from '@/components/sports/types'
+
+import { GoodsData } from '@/types/type'
+
+import { Gift, ChevronRight, ChevronLeft } from 'lucide-react'
 
 interface SportsGoodsContainerProps {
     dataArr: GoodsData[]

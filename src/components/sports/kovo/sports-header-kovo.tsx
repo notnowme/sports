@@ -5,11 +5,8 @@ import { useEffect, useState } from 'react'
 import { kovo_man_team, kovo_woman_team } from '@/components/sports/data/kovoTeam'
 import { useSelectedLayoutSegments } from "next/navigation";
 import Link from 'next/link';
+import { Emblem } from '@/types/type';
 
-interface Emblem {
-    name: string
-    imgUrl: string
-}
 
 const teamLink: { [key: string]: string
 } = {

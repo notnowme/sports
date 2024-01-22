@@ -1,4 +1,4 @@
-import { MatchData } from '@/components/sports/types'
+import { MatchData } from '@/types/type'
 
 const kbl_matches = [
     {
